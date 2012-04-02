@@ -1,50 +1,77 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
   <meta charset='utf-8'>
-
-  <title>Kujua Export</title>
-
-  <style type="text/css">
-    body {
-      margin-top: 1.0em;
-      background-color: #25080e;
-      font-family: Helvetica, Arial, FreeSans, san-serif;
-      color: #ffffff;
-    }
-    #container {
-      margin: 0 auto;
-      width: 700px;
-    }
-    h1 { font-size: 3.8em; color: #daf7f1; margin-bottom: 3px; }
-    h1 .small { font-size: 0.4em; }
-    h1 a { text-decoration: none }
-    h2 { font-size: 1.5em; color: #daf7f1; }
-    h3 { text-align: center; color: #daf7f1; }
-    a { color: #daf7f1; }
-    .description { font-size: 1.2em; margin-bottom: 30px; margin-top: 30px; font-style: italic;}
-    .download { float: right; }
-    pre { background: #000; color: #fff; padding: 15px;}
-    hr { border: 0; width: 80%; border-bottom: 1px solid #aaa}
-    .footer { text-align:center; padding-top:30px; font-style: italic; }
-  </style>
+  <title>Kujua Export - SMS Forms export utility.</title>
+  <link rel="stylesheet" type="text/css" href="css/style.css">
 </head>
 
 <body>
+  <div class="container-fluid">
 
-  <div id="container">
-
-    <h1>Kujua Export
-      <span class="small">by <a href="https://github.com/medic">medic</a></span></h1>
-
-    <div class="description">
-      SMS Forms export utility.
+    <div class="row-fluid">
+      <div class="hero-unit">
+        <h1><span class="kujua">Kujua</span> Export</h1>
+        <p>SMS Forms export utility.</p>
+        <p>
+          <a class="btn btn-primary btn-large">Learn more</a>
+        </p>
+      </div>
     </div>
     
-    <h2>Contact</h2>
-    <p>Medic Mobile (dev@medicmobile.org)<br/>      </p>
+    <div class="row-fluid faqs hide">
+        <div class="span4">
+          <h2>What is Kujua?</h2>
+          <p>
+          <span class="kujua">Kujua</span> is an SMS data collection and
+          analytics software platform targeted at community health care
+          workers in the developing world.  We help large health
+          organizations to collect and analyze data sent from health care
+          workers using ordinary mobile phones in remote and rural environments.
+          </p>
+        </div>
+        <div class="span4">
+          <h2>How does it work?</h2>
+          <p>
+          <span class="kujua">Kujua</span> is compromised of the following
+          components: <i>Muvuku</i>, <i>SMSSync</i> and Kujua Export.
+          <i>Muvuku</i> is software that runs on a parallel SIM card and
+          provides customized input forms to nearly any ordinary cell phone,
+          using the native API of the phone.  It collects the data on the
+          phone and then sends a specially formatted SMS message to an SMS
+          Gateway.  SMSSync is used as the collection device which then
+          passes the data to a web application listening on the same local
+          network as the Gateway.  Kujua Export provides an interface to the
+          SMS data, making it more useable for reporting and analytics.  
+          </p>
+        </div>
+        <div class="span4">
+          <h2>What is a CouchApp?</h2>
+          <p>
+          A <b>CouchApp</b> is a web application that runs inside of
+          CouchDB.  It is part of a distributed architecture philosophy that
+          allows for easy replication and sharing of applications and data.
+          In the environments we deploy in rolling blackouts and intermittent
+          connections are very common.  So we must keep the data as
+          close/local to the people using it as possible.  CouchDB also
+          provides a web server as well as a Javascript interpreter, so the
+          only infrastructure requirement to run the web application is
+          CouchDB.
+          </p>
+        </div>
+    </div>
+
+    <p class="footer">&copy; 
+    <span class="year"></span> Medic Mobile
+    </p>
+    <p class="footer-logo">
+      <a href="https://github.com/medic">
+        <img src="branding/static/img/medic-logo-foot.png" />
+      </a>
+    </p> 
 
   </div>
-
 </body>
+<script src="js/jquery.js" type="text/javascript"></script>
+<script src="js/main.js" type="text/javascript"></script>
 </html>
