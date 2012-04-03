@@ -24,42 +24,40 @@
         <div class="span4">
           <h2>What is Kujua?</h2>
           <p>
-          <span class="kujua">Kujua</span> is a SMS data collection and
-          analytics software platform targeted at community health care
-          workers in the developing world.  We help large health organizations
-          collect and analyze data sent from health care workers using ordinary
-          mobile phones in remote and rural environments.
+          <span class="kujua">Kujua is an SMS data collection and analytics
+            software platform focused on community health care workers in the
+            developing world. We help large health organizations collect and
+            analyze data sent from health care workers using ordinary mobile
+            phones in remote and rural environments.  
           </p>
         </div>
         <div class="span4">
           <h2>How does it work?</h2>
           <p>
           <span class="kujua">Kujua</span> is currently made up of the
-          following components: <i>Muvuku</i>, <i>SMSSync</i> and <i>Kujua Export</i>.
-          <i>Muvuku</i> is a framework for rapid design, compilation, and
-          deployment of forms that run on nearly any ordinary cell phone, using
-          the native API of the phone.  The forms collect data on the phone and
-          then sends a specially formatted SMS message to a SMS Gateway.
-          <i>SMSSync</i> is used as the collection device which then passes the
-          data to a web service listening on the same local network as the
-          Gateway.  <i>Kujua Export</i> consumes the SMS data and creates
-          records that can be managed via a user interface, allowing you to
-          monitor your incoming data, download it to a spreadsheet, and manage
-          your related facility data.
+          following components: <i>Muvuku</i>, <i>SMSSync</i> and <i>Kujua
+            Export</i>.  <i>Muvuku</i> is a framework for rapid design,
+          compilation, and deployment of forms that run on nearly any ordinary
+          cell phone, using the native API of the phone. The forms collect data
+          on the phone and send messages to an SMS Gateway (<i>SMSSync</i>),
+          and then to a web service on the local network.  <i>Kujua Export</i>
+          creates records and provides a user interface to the SMS data.  It
+          allowing you to monitor your incoming data, export it to a
+          spreadsheet, and manage your related facility data.
           </p>
         </div>
         <div class="span4">
           <h2>What is a CouchApp?</h2>
           <p>
-          A <b>CouchApp</b> is a web application or service that runs inside of
-          CouchDB.  It is part of a distributed architecture philosophy that
-          allows for easy replication and sharing of applications and data over
-          HTTP.  The environments we deploy in have rolling blackouts and
-          intermittent connections to the internet.  So we must keep the data
-          as close and local to the people using it as possible.  CouchDB also
-          provides a web server as well as a Javascript interpreter, so the
-          only infrastructure requirement to run the web application is
-          CouchDB.  <i>Kujua Export</i> is a CouchApp.  
+          A <i>CouchApp</i> is a web application or service that runs inside of
+          CouchDB.  <i>Kujua Export</i> is a CouchApp.  It is part of a
+          distributed architecture philosophy that allows for easy replication
+          and sharing of applications and data over HTTP, the lingua franca of
+          the web. The environments we deploy in have rolling blackouts and
+          intermittent connections to the internet. So we must keep the data as
+          local to the people using it as possible. CouchDB also provides a web
+          server as well as a Javascript interpreter, so the only
+          infrastructure requirement to run the web application is CouchDB.
           </p>
           <a class="btn btn-primary" href="#install">Ok, so how do I install it?</a>
         </div>
