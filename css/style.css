@@ -824,5 +824,9 @@ a.thumbnail:hover{border-color:#1a8fb2;-webkit-box-shadow:0 1px 4px rgba(0, 105,
 body{padding-top:10px;}
 h1{font-weight:normal;}
 .kujua{color:#000;}
+.hero-unit{position:relative;padding:3em;-webkit-border-radius:50px;-moz-border-radius:50px;border-radius:50px;-webkit-border-radius:50px;-moz-border-radius:50px;border-radius:50px;background-color:#ffe199;color:#4d4d4d;}.hero-unit .kujua{color:#cc8f00;}
+.hero-unit:after{content:"";position:absolute;bottom:-10px;left:55px;border-width:15px 15px 0;border-style:solid;border-color:#ffe199 transparent;display:block;width:0;}
+.hero-unit .tagline{float:right;}
 .footer{margin:40px auto 10px auto;width:150px;color:#999999;}
 .footer-logo{margin:0 auto 20px auto;width:50px;}
+@media (max-width:480px){.hero-unit{padding:2.75em;} .faqs h2:first-child{margin-top:20px;}}

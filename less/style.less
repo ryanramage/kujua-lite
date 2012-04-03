@@ -1,6 +1,9 @@
 @import "../bootstrap/less/bootstrap.less";
 @import "../bootstrap/less/responsive.less";
 @import "../branding/css/base.less";
+
+@lightGold: lighten(@gold, 40%);
+
 body {
   padding-top: 10px;
 }
@@ -9,6 +12,30 @@ h1 {
 }
 .kujua {
   color: #000;
+}
+.hero-unit {
+  position:relative;
+  padding: 3em;
+  .border-radius(50px);
+  background-color: @lightGold;
+  color: lighten(#000, 30%);
+  .kujua {
+    color: @gold;
+  }
+  &:after {
+    content: "";
+    position: absolute;
+    bottom: -10px;
+    left: 55px;
+    border-width: 15px 15px 0;
+    border-style: solid;
+    border-color: @lightGold transparent;
+    display: block;
+    width: 0;
+  }
+  .tagline {
+    .pull-right;
+  }
 }
 .footer {
   margin: 40px auto 10px auto;
@@ -19,3 +46,12 @@ h1 {
   margin: 0 auto 20px auto;
   width: 50px;
 }
+@media (max-width: 480px) {
+  .hero-unit { 
+    padding: 2.75em;
+  }
+  .faqs h2:first-child {
+    margin-top: 20px;
+  }
+}
+
