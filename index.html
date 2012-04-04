@@ -24,7 +24,7 @@
         <div class="span4">
           <h2>What is Kujua?</h2>
           <p>
-          <span class="kujua">Kujua</span> is an SMS data collection and analytics
+          <span class="kujua">Kujua</span> is a SMS data collection and analytics
             software platform focused on community health care workers in the
             developing world. We help large health organizations collect and
             analyze data sent from health care workers using ordinary mobile
@@ -46,7 +46,7 @@
           it to a spreadsheet, and manage your related facility data.
           </p>
         </div>
-        <div class="span4">
+        <div class="span4 what">
           <h2>What is a CouchApp?</h2>
           <p>
           A <i>CouchApp</i> is a web application or service that runs inside of
@@ -63,8 +63,74 @@
         </div>
     </div>
 
-    <p class="footer">&copy; 
-    <span class="year"></span> Medic Mobile
+    <div class="row install hide" name="install">
+      <div class="span6">
+        <h2>Install</h2>
+        <p>How do you install a CouchApp?  Usually by making a HTTP request.</p>
+
+<pre>POST /_replicate HTTP/1.1
+
+{"source":"https://medic.iriscouch.com/kujua-export","target":"dbname","create_target":true}</pre>
+
+        <h3>Replicate using Curl</h3>
+        <p>Using <code>curl</code> and CouchDB on localhost the command is:</p>
+
+        <pre>curl -H 'Content-Type: application/json' -X POST http://localhost:5984/_replicate -d '{"source":"https://medic.iriscouch.com/kujua-export","target":"dbname","create_target":true}'</pre>
+
+        <p><i>Note:</i> use the name of your database instead of "dbname".</p>
+
+        <h3>Download JSON</h3>
+        <p>Alternatively you can download the CouchApp (JSON file) and create
+        the design document yourself.  The complete application is bundled as a
+        JSON file, including the Android Gateway.</p>
+        <ol>
+          <li>
+            <p>Download the JSON file: <a
+              href="downloads/kujua-export-fa3c9b.json.zip" class="btn btn-primary"
+              >kujua-export-fa3c9b.json.zip</a> (2.5M)</p>
+            <p>
+          <li><p>Unzip it:</p>
+            <pre>unzip kujua-export-fa3c9b.json.zip</pre>
+          </li>
+          <li><p>Install with curl:</p>
+            <pre>curl -H 'Content-Type: application/json' -X PUT http://localhost:5984/dbname/_design/kujua-export -d @kujua-export-fa3c9b.json</pre>
+
+            <p><i>Note:</i> use the name of your database instead of "dbname".</p>
+
+          </li>
+        </ol>
+
+      </div>
+      <div class="span6 develop">
+        <h2>Develop</h2>
+
+        <p>To make your own modifications to Kujua Export we recommend using <a
+          href="http://kan.so/">Kanso</a>, this is a great way to develop
+        CouchApps.  Kanso is a build tool that includes a package management
+        system. To get a development environment running for Kujua Export first
+        install Kanso then:</p>
+
+        <ol>
+          <li><p>Clone the source code from Github:</p>
+          <pre>git clone https://github.com/medic/kujua-export.git</pre>
+          </li>
+          <li><p>Then run:</p>
+          <pre>kanso push dbname</pre>
+          </li>
+        </ol>
+        <h2>Help</h2>
+        <p>Is this all too complicated?  Yea, we know.  Please reach out, we
+        are glad to help.  Contact us on <a
+          href="http://github.com/medic">Github</a> or you can find us on IRC
+        #medicmobile on FreeNode.</p> 
+        <p>Also have a look at the <a
+          href="https://medic.iriscouch.com/kujua-export/_design/kujua-export/_rewrite/docs/install/">complete
+          install instructions</a> as well.</p>
+      </div>
+    </div>
+
+
+    <p class="footer">&copy; <span class="year"></span> Medic Mobile
     </p>
     <p class="footer-logo">
       <a href="https://github.com/medic">
