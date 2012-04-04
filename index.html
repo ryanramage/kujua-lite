@@ -63,26 +63,26 @@
         </div>
     </div>
 
-    <div class="row install hide" name="install">
+    <div class="row install hide">
       <div class="span6">
         <h2>Install</h2>
-        <p>How do you install a CouchApp?  Usually by making a HTTP request.</p>
+        <p>How do you install a CouchApp?  Usually by making a HTTP request to
+        initiate replication.  We maintain the production version of Kujua
+        Export at the URL below so anyone can replicate it:</p>
 
-<pre>POST /_replicate HTTP/1.1
+        <pre>https://medic.iriscouch.com/kujua-export</pre>
 
-{"source":"https://medic.iriscouch.com/kujua-export","target":"dbname","create_target":true}</pre>
-
-        <h3>Replicate using Curl</h3>
+        <h3>Replicate with Curl</h3>
         <p>Using <code>curl</code> and CouchDB on localhost the command is:</p>
 
         <pre>curl -H 'Content-Type: application/json' -X POST http://localhost:5984/_replicate -d '{"source":"https://medic.iriscouch.com/kujua-export","target":"dbname","create_target":true}'</pre>
 
         <p><i>Note:</i> use the name of your database instead of "dbname".</p>
 
-        <h3>Download JSON</h3>
+        <h3>Install JSON File</h3>
         <p>Alternatively you can download the CouchApp (JSON file) and create
-        the design document yourself.  The complete application is bundled as a
-        JSON file, including the Android Gateway.</p>
+        the design document yourself.  The Android Gateway is bundled in as well.
+        </p>
         <ol>
           <li>
             <p>Download the JSON file: <a
@@ -99,18 +99,18 @@
 
           </li>
         </ol>
-
       </div>
       <div class="span6 develop">
         <h2>Develop</h2>
 
         <p>To make your own modifications to Kujua Export we recommend using <a
-          href="http://kan.so/">Kanso</a>, this is a great way to develop
-        CouchApps.  Kanso is a build tool that includes a package management
-        system. To get a development environment running for Kujua Export first
-        install Kanso then:</p>
+          href="http://kan.so/">Kanso</a>.  Kanso builds the JSON design
+        document and provides almost everything you need to deal with
+        CouchApps, including a package management system. To get a development
+        environment running for Kujua Export do the following:</p>
 
         <ol>
+          <li><p><a href="http://kan.so/install">Install Kanso</a></p></li>
           <li><p>Clone the source code from Github:</p>
           <pre>git clone https://github.com/medic/kujua-export.git</pre>
           </li>
@@ -123,9 +123,6 @@
         are glad to help.  Contact us on <a
           href="http://github.com/medic">Github</a> or you can find us on IRC
         #medicmobile on FreeNode.</p> 
-        <p>Also have a look at the <a
-          href="https://medic.iriscouch.com/kujua-export/_design/kujua-export/_rewrite/docs/install/">complete
-          install instructions</a> as well.</p>
       </div>
     </div>
 
