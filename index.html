@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset='utf-8'>
-  <title>Kujua Export - SMS Forms export utility.</title>
+  <title>Kujua \+/ Medic Mobile</title>
   <link rel="stylesheet" type="text/css" href="css/style.css">
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 </head>
@@ -24,40 +24,39 @@
         <div class="span4">
           <h2>What is Kujua?</h2>
           <p>
-          <span class="kujua">Kujua</span> is a SMS data collection and analytics
-            software platform focused on community health care workers in the
-            developing world. We help large health organizations collect and
-            analyze data sent from health care workers using ordinary mobile
-            phones in remote and rural environments.  
+          <span class="kujua">Kujua</span> is a web based SMS data collection
+          and analytics tool focused on community health care workers in the
+          developing world. We help large health organizations collect and
+          analyze data sent from health care workers using ordinary mobile
+          phones in remote and rural environments.  
           </p>
         </div>
         <div class="span4">
           <h2>How does it work?</h2>
           <p>
-          <span class="kujua">Kujua</span> is currently made up of the
-          following components: <i>Muvuku</i>, <i>SMSSync</i> and <i>Kujua
-            Export</i>.  <i>Muvuku</i> is a framework for rapid design,
-          compilation, and deployment of forms that run on nearly any ordinary
-          cell phone, using the native API of the phone. The forms collect data
-          on the phone and send messages to an SMS Gateway (<i>SMSSync</i>),
-          and then to a web service (<i>Kujua Export</i>) on the local network.
-          <i>Kujua Export</i> creates records and provides a user interface to
-          the SMS data.  It allowing you to monitor your incoming data, export
-          it to a spreadsheet, and manage your related facility data.
+          <span class="kujua">Kujua</span> works together with <i>SMSSync</i>
+          and optionally <i>Muvuku</i>.  <i>Muvuku</i> is a framework for rapid
+          design, compilation, and deployment of forms that run on nearly any
+          ordinary cell phone, using the STK API of the phone. The forms
+          collect data on the phone and send messages to <i>SMSSync</i> which
+          does an HTTP POST to the web service (<i>Kujua</i>).  <i>Kujua</i>
+          creates records and provides an interface to the SMS data.  It
+          allowing you to monitor your incoming data, export it to a
+          spreadsheet, and manage your related facility data.
           </p>
         </div>
         <div class="span4 what">
           <h2>What is a CouchApp?</h2>
           <p>
           A <i>CouchApp</i> is a web application or service that runs inside of
-          CouchDB.  <i>Kujua Export</i> is a CouchApp.  It is part of a
-          distributed architecture philosophy that allows for easy replication
-          and sharing of applications and data over HTTP, the lingua franca of
-          the web. The environments we deploy in have rolling blackouts and
+          CouchDB.  <i>Kujua</i> is a CouchApp.  It incorporates 
+          distributed architecture that allows for easy replication
+          and sharing of applications and data over HTTP.
+          The environments we deploy in have rolling blackouts and
           intermittent connections to the internet. So we must keep the data as
           local to the people using it as possible. CouchDB also provides a web
           server as well as a Javascript interpreter, so the only
-          infrastructure requirement to run the web application is CouchDB.
+          infrastructure requirement to run Kujua is CouchDB.
           </p>
           <a href="#install">Ok, so how do I install it?</a>
         </div>
@@ -68,16 +67,14 @@
         <h2>Install</h2>
         <p>How do you install a CouchApp?  Usually by making a HTTP request to
         initiate replication.  We maintain the production version of Kujua
-        Export at the URL below so anyone can replicate it:</p>
+        at the URL below so anyone can replicate it:</p>
 
-        <pre>https://medic.iriscouch.com/kujua-export</pre>
+        <pre>https://medic.iriscouch.com/kujua-base</pre>
 
         <h3>Replicate with Curl</h3>
         <p>Using <code>curl</code> and CouchDB on localhost the command is:</p>
 
-        <pre>curl -H 'Content-Type: application/json' -X POST http://localhost:5984/_replicate -d '{"source":"https://medic.iriscouch.com/kujua-export","target":"dbname","create_target":true}'</pre>
-
-        <p><i>Note:</i> use the name of your database instead of "dbname".</p>
+        <pre>curl -H 'Content-Type: application/json' -X POST http://localhost:5984/_replicate -d '{"source":"https://medic.iriscouch.com/kujua-base","target":"your-db-name","create_target":true}'</pre>
 
         <h3>Install JSON File</h3>
         <p>Alternatively you can download the CouchApp (JSON file) and create
@@ -86,16 +83,15 @@
         <ol>
           <li>
             <p>Download the JSON file: <a
-              href="downloads/kujua-export-fa3c9b.json.zip" class="btn btn-primary"
-              >kujua-export-fa3c9b.json.zip</a> (2.5M)</p>
+              href="downloads/kujua-base-fa3c9b.json.zip" class="btn btn-primary"
+              >kujua-base-fa3c9b.json.zip</a> (2.5M)</p>
             <p>
           <li><p>Unzip it:</p>
-            <pre>unzip kujua-export-fa3c9b.json.zip</pre>
+            <pre>unzip kujua-base-fa3c9b.json.zip</pre>
           </li>
           <li><p>Install with curl:</p>
-            <pre>curl -H 'Content-Type: application/json' -X PUT http://localhost:5984/dbname/_design/kujua-export -d @kujua-export-fa3c9b.json</pre>
+            <pre>curl -H 'Content-Type: application/json' -X PUT http://localhost:5984/your-db-name/_design/kujua-base -d @kujua-base-fa3c9b.json</pre>
 
-            <p><i>Note:</i> use the name of your database instead of "dbname".</p>
 
           </li>
         </ol>
@@ -116,19 +112,19 @@
 
         <h2>Develop</h2>
 
-        <p>To make your own modifications to Kujua Export we recommend using <a
+        <p>To make your own modifications to Kujua we recommend using <a
           href="http://kan.so/">Kanso</a>.  Kanso builds the JSON design
-        document and provides almost everything you need to deal with
-        CouchApps, including a package management system. To get a development
-        environment running for Kujua Export do the following:</p>
+        document and provides a build framework for dealing with CouchApps,
+        including a package management system. To start developing on
+        Kujua do the following:</p>
 
         <ol>
           <li><p><a href="http://kan.so/install">Install Kanso</a></p></li>
           <li><p>Clone the source code from Github:</p>
-          <pre>git clone https://github.com/medic/kujua-export.git</pre>
+          <pre>git clone https://github.com/medic/kujua-base.git</pre>
           </li>
           <li><p>Then run:</p>
-          <pre>kanso push dbname</pre>
+          <pre>kanso push your-db-name</pre>
           </li>
         </ol>
         <h2>Help</h2>
@@ -137,8 +133,8 @@
           href="http://github.com/medic">Github</a> or you can find us on IRC
         #medicmobile on FreeNode.</p> 
 
-        <p>Also if you are looking for more infomation please see the <a
-          href="https://medic.iriscouch.com/kujua-export/_design/kujua-export/_rewrite/docs/install/">complete install documentation</a>.
+        <p>Also please see the <a
+          href="https://medic.iriscouch.com/kujua-base/_design/kujua-base/_rewrite/docs/install/">complete install documentation</a>.
         </p>
       </div>
     </div>
