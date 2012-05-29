@@ -3,6 +3,8 @@
 @import "../branding/css/base.less";
 
 @lightGold: lighten(@gold, 40%);
+@baseFontSize: 15px;
+@baseLineHeight: 20px;
 
 body {
   padding-top: 10px;
@@ -19,12 +21,15 @@ h1 {
   color: @gold;
 }
 .hero-unit {
-  width: 15em;
+  width: 13em;
   position:relative;
   padding: 3em;
   .border-radius(50px);
   background-color: @gold;
   color: lighten(#000, 30%);
+  h1 {
+    font-size: 64px;
+  }
   .kujua {
     color: #fff;
   }
@@ -47,6 +52,7 @@ h1 {
   margin: 40px auto 10px auto;
   width: 150px;
   color: @grayLight;
+  font-size: 13px;
 }
 .footer-logo {
   margin: 0 auto 20px auto;
