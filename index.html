@@ -65,18 +65,54 @@
     <div class="row install hide">
       <div class="span6">
         <h2>Install</h2>
-        <p>How do you install a CouchApp?  Usually by making a HTTP request to
-        initiate replication.  We maintain the production version of Kujua
-        at the URL below so anyone can replicate it:</p>
+        
+        <h3>First, get CouchDB</h3>
+        <p>We recommend the Couchbase installers, they did a great job of packaging it.</p>
+        <ol>
+          <li>Go to the <a href="http://www.couchbase.org/get/couchbase-single/2.0">Couchbase Single Server Download</a> page.</li>
+          <li>Click the Download button under <i>Developer Preview</i> to the right.</li>
+          <li>Click the right link for your operating system, use the .zip file if
+          you are on OSX, .exe on Windows.</li>
+          <li>Open the install file and follow the instructions.</li>
+        </ol>
+
+        <h3>Then, replicate:</h3>
+
+        <p>How do you install a CouchApp?  You make a HTTP request.  Neat, eh?</p>
+
+        <p>We maintain the production version of Kujua at this URL so anyone
+        can easily replicate it:</p>
 
         <pre>https://medic.iriscouch.com/kujua-base</pre>
 
-        <h3>Replicate with Curl</h3>
-        <p>Using <code>curl</code> and CouchDB on localhost the command is:</p>
+        <p>Would you like instructions for <a id="curl" href="#withcurl">Curl</a> or <a id="futon" href="#withfuton">Futon</a>?</p>
 
-        <pre>curl -H 'Content-Type: application/json' -X POST http://localhost:5984/_replicate -d '{"source":"https://medic.iriscouch.com/kujua-base","target":"your-db-name","create_target":true}'</pre>
+        <div class="withcurl hide">
+        <h4>Using Curl</h4>
+        <p>With CouchDB running on localhost run this command:</p>
 
-        <h3>Install JSON File</h3>
+        <pre>curl -H 'Content-Type: application/json' -X POST http://localhost:5984/_replicate -d '{"source":"https://medic.iriscouch.com/kujua-base","target":"kujua","create_target":true}'</pre>
+        </div>
+        <div class="withfuton hide">
+        <h4>Using Futon</h4>
+        <p>With CouchDB running on localhost:</p>
+        <ol>
+          <li>Navigate to the Replicator screen in Futon: <a href="http://localhost:5984/_utils/replicator.html">http://localhost:5984/_utils/replicator.html</a></li>
+          <li>In <b>Remote</b> enter <code>https://medic.iriscouch.com/kujua-base</code></li>
+          <li>In <b>Local</b> enter <code>kujua</code></li>
+          <li>Click <b>Replicate</b> and wait for replication to complete, should be less than a minute depending on your connection.</li>
+        </ol>
+        </div>
+
+        <h3>Lastly, follow the Kujua Setup process:</h3>
+        <p>A fresh Kujua should now be installed, but there are a few things
+        left to configure.</p>
+        <ol>
+          <li>Point your browser to your Kujua instance: <a href="http://localhost:5984/kujua/_design/kujua-base/_rewrite/">http://localhost:5984/kujua/_design/kujua-base/_rewrite/</a></li> 
+          <li>Follow the instructions to finalize the installation.</li>
+        </ol>
+
+        <!--h3>Install JSON File</h3>
         <p>Alternatively you can download the CouchApp (JSON file) and create
         the design document yourself.  The Android Gateway is bundled in as well.
         </p>
@@ -94,17 +130,23 @@
 
 
           </li>
-        </ol>
+        </ol-->
 
         <div class="smssync">
           <h3>Install SMSSync</h3>
 
-          <p>Navigate your Android browser here then click the button to begin
-          downloading to your device.</p>
+          <p>To get SMS messages in your Couch we recommend SMSSync,
+          navigate your Android browser to this page then click the button to
+          begin downloading to your device.</p>
 
           <p><a href="https://medic.s3.amazonaws.com/downloads/gateway/SMSSync-kujua2-debug.apk" 
                    class="btn btn-primary"
-                   >SMSSync 1.1.9 kujua.2 Beta (196K)</a></p>
+                   >SMSSync 1.1.9 kujua.2 Beta (196K)</a>
+                 <small>
+                   <a href="https://medic.s3.amazonaws.com/downloads/gateway/SMSSync-kujua2-debug.apk.md5">md5</a>,  
+                   <a href="https://medic.s3.amazonaws.com/downloads/gateway/SMSSync-kujua2-debug.apk.sha">sha</a>
+                 </small>
+         </p>
         </div>
 
       </div>
@@ -113,7 +155,7 @@
         <h2>Develop</h2>
 
         <p>To make your own modifications to Kujua we recommend using <a
-          href="http://kan.so/">Kanso</a>.  Kanso builds the JSON design
+          href="http://kan.so/">Kanso</a>.  Kanso assembles the JSON design
         document and provides a build framework for dealing with CouchApps,
         including a package management system. To start developing on
         Kujua do the following:</p>
@@ -124,7 +166,7 @@
           <pre>git clone https://github.com/medic/kujua-base.git</pre>
           </li>
           <li><p>Then run:</p>
-          <pre>kanso push your-db-name</pre>
+          <pre>kanso push kujua</pre>
           </li>
         </ol>
         <h2>Help</h2>
