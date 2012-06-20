@@ -1,0 +1,11 @@
+{
+    "name": "kujua-sentinel",
+    "description": "Takes data messages, and gets them ready for prime time.",
+    "private": true,
+    "dependencies": {
+      "coffee-script": "latest",
+      "felix-couchdb": "latest",
+      "underscore": "latest"
+    },
+    "version": "0.0.1"
+}
