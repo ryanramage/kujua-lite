@@ -3,7 +3,7 @@ _ = require('underscore')
 class Transition
   constructor: (options = {}) ->
     @db = require('../db')
-    { @callback, @filter, @onMatch } = options
+    _.extend(@, options)
     @callback ?= (err, doc) ->
       # do nothing after updating the document
     @filter ?= (doc, req) ->
