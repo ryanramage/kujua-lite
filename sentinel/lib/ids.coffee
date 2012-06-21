@@ -21,10 +21,10 @@ addCheckDigit = (nhi) ->
   result = total % 11
   nhi.push(if result is 10 then 0 else result)
 
-generate = (num, s) ->
+generate = (s) ->
   sum = crypto.createHash('md5')
-  sum.update("#{num}-#{s}")
-  number = parseInt(sum.digest('hex'), 16)
+  sum.update("#{s}-#{new Date().getTime() * Math.random()}")
+  number = parseInt(sum.digest('hex').substring(0, 12), 16)
   result = []
 
   number = addNumber(result, number)

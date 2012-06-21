@@ -10,14 +10,12 @@ module.exports = new Transition(
     { doc } = change
     { from, related_entities } = doc
     @db.view('kujua-base', 'clinic_by_phone', key: [from], limit: 1, (err, data) =>
-      debugger
       if err
         @callback(err, false)
       else
         clinic = _.first(data.rows)?.value
         existing = related_entities.clinic or {}
         { _id, _rev } = existing
-        debugger
         if clinic and (clinic._id isnt _id or clinic._rev isnt _rev)
             related_entities.clinic = clinic
             @db.saveDoc(doc, @callback)
