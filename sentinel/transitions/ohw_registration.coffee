@@ -9,5 +9,6 @@ module.exports = new Transition(
     { doc } = change
     doc.patient_identifiers = []
     doc.patient_identifiers.push(ids.generate(new Date().getTime() * Math.random(), doc.patient_name))
+    @db.saveDoc(doc, @callback)
     true
 )
