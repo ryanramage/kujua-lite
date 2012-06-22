@@ -25,7 +25,7 @@ module.exports = new Transition(
       @addAcknowledgement(doc)
     @db.saveDoc(doc, @callback)
   addAcknowledgement: (doc) ->
-    { patient_identifiers, patient_name, tasks } = doc
+    { from, patient_identifiers, patient_name, tasks } = doc
     visit = _.find(tasks, (task) ->
       task.type is 'anc_visit'
     )
@@ -34,15 +34,15 @@ module.exports = new Transition(
       weeks = Math.round(interval / ( 7 * 24 * 60 * 60 * 1000))
 
       tasks.unshift(
+        messages: [ to: from, message: "Thank you for registering #{patient_name}. Patient ID is #{_.first(patient_identifiers)}. Next ANC visit is in #{weeks} weeks." ]
         state: 'pending'
-        messages: [ "Thank you for registering #{patient_name}. Patient ID is #{_.first(patient_identifiers)}. Next ANC visit is in #{weeks} weeks." ]
       )
   calculateDate: (doc, weeks) ->
     reminder_date = new Date(doc.lmp_date)
     reminder_date.setDate(reminder_date.getDate() + (weeks * 7))
     reminder_date
   scheduleReminders: (doc) ->
-    { lmp_date, patient_name, related_entities, tasks } = doc
+    { from, lmp_date, patient_name, related_entities, tasks } = doc
     lmp = new Date(lmp_date)
     now = new Date()
     name = related_entities?.clinic?.name or 'health volunteer'
@@ -51,27 +51,27 @@ module.exports = new Transition(
       if reminder_date > now
         tasks.push(
           due: reminder_date.getTime()
+          messages: [ to: from, message: "Greetings, #{name}. #{patient_name} is due for an ANC visit this week." ]
           state: 'scheduled'
-          messages: [ "Greetings, #{name}. #{patient_name} is due for an ANC visit this week." ]
           type: 'anc_visit'
         )
     , @)
     tasks.push(
       due: @calculateDate(doc, 32).getTime()
+      messages: [ to: from, message: "Greetings, #{name}.  It's now #{patient_name}'s 8th month of pregnancy. If you haven't given Miso, please distribute. Make birth plan now. Thank you!" ]
       state: 'scheduled'
-      messages: [ "Greetings, #{name}.  It's now #{patient_name}'s 8th month of pregnancy. If you haven't given Miso, please distribute. Make birth plan now. Thank you!" ]
       type: 'miso_reminder'
     )
     tasks.push(
       due: @calculateDate(doc, 37).getTime()
+      messages: [ to: from, message: "Greetings, #{name}. #{patient_name} is due to deliver soon." ]
       state: 'scheduled'
-      messages: [ "Greetings, #{name}. #{patient_name} is due to deliver soon." ]
       type: 'upcoming_delivery'
     )
     tasks.push(
       due: @calculateDate(doc, 41).getTime()
+      messages: [ to: from, message: "Greetings, #{name}. Please submit the birth report for #{patient_name}." ]
       state: 'scheduled'
-      messages: [ "Greetings, #{name}. Please submit the birth report for #{patient_name}." ]
       type: 'outcome_request'
     )
 )
