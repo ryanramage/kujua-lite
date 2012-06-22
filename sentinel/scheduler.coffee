@@ -3,7 +3,7 @@ _ = require('underscore')
 
 check_schedule = ->
   # only send between 9am and 6pm
-  return unless 8 < new Date().getHours() < 18
+  return unless 8 <= new Date().getHours() <= 18
 
   db.view('kujua-sentinel', 'due_tasks', (err, data) ->
     _.each(data.rows, (row) ->
