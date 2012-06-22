@@ -25,8 +25,8 @@ module.exports = new Transition(
       @addAcknowledgement(doc)
     @db.saveDoc(doc, @callback)
   addAcknowledgement: (doc) ->
-    { from, patient_identifiers, patient_name, tasks } = doc
-    visit = _.find(tasks, (task) ->
+    { from, patient_identifiers, patient_name, scheduled_tasks, tasks } = doc
+    visit = _.find(scheduled_tasks, (task) ->
       task.type is 'anc_visit'
     )
     if visit
@@ -42,33 +42,34 @@ module.exports = new Transition(
     reminder_date.setDate(reminder_date.getDate() + (weeks * 7))
     reminder_date
   scheduleReminders: (doc) ->
-    { from, lmp_date, patient_name, related_entities, tasks } = doc
+    doc.scheduled_tasks ?= []
+    { from, lmp_date, patient_name, related_entities, scheduled_tasks, tasks } = doc
     lmp = new Date(lmp_date)
     now = new Date()
     name = related_entities?.clinic?.name or 'health volunteer'
     _.each([16, 24, 32, 36], (weeks) ->
       reminder_date = @calculateDate(doc, weeks)
       if reminder_date > now
-        tasks.push(
+        scheduled_tasks.push(
           due: reminder_date.getTime()
           messages: [ to: from, message: "Greetings, #{name}. #{patient_name} is due for an ANC visit this week." ]
           state: 'scheduled'
           type: 'anc_visit'
         )
     , @)
-    tasks.push(
+    scheduled_tasks.push(
       due: @calculateDate(doc, 32).getTime()
       messages: [ to: from, message: "Greetings, #{name}.  It's now #{patient_name}'s 8th month of pregnancy. If you haven't given Miso, please distribute. Make birth plan now. Thank you!" ]
       state: 'scheduled'
       type: 'miso_reminder'
     )
-    tasks.push(
+    scheduled_tasks.push(
       due: @calculateDate(doc, 37).getTime()
       messages: [ to: from, message: "Greetings, #{name}. #{patient_name} is due to deliver soon." ]
       state: 'scheduled'
       type: 'upcoming_delivery'
     )
-    tasks.push(
+    scheduled_tasks.push(
       due: @calculateDate(doc, 41).getTime()
       messages: [ to: from, message: "Greetings, #{name}. Please submit the birth report for #{patient_name}." ]
       state: 'scheduled'
