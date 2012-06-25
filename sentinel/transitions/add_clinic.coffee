@@ -5,7 +5,7 @@ module.exports = new Transition(
   filter: (doc) ->
     { form, related_entities } = doc
     { clinic } = related_entities or {}
-    form is 'ORPT' and not clinic?.name
+    'ORPT OANC'.split(' ').indexOf(form) >= 0 and not clinic?.name
   onMatch: (change) ->
     { doc } = change
     { from, related_entities } = doc
