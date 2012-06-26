@@ -3,6 +3,7 @@
     "description": "Takes data messages, and gets them ready for prime time.",
     "private": true,
     "dependencies": {
+      "async": "latest",
       "coffee-script": "latest",
       "felix-couchdb": "latest",
       "underscore": "latest"

@@ -12,6 +12,12 @@ module.exports = {
             indexes.push(index)
       )
       emit([doc._id, doc._rev], indexes) if indexes.length > 0
+  sent_cdc_reminders:
+    map: (doc) ->
+      { form, related_entities, week_number } = doc
+      { clinic } = related_entities
+      if form is 'CNPW' and clinic
+        emit(week_number, clinic)
   obsolete_scheduled_tasks:
     map: (doc) ->
       tasks = doc.scheduled_tasks or []

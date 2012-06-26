@@ -7,6 +7,7 @@ module.exports = _.reduce(fs.readdirSync('./transitions'), (memo, file) ->
       transition = require("./#{file}")
       memo[file.replace(/\.coffee$/, '')] = transition
   catch e
-    console.log("ERRORSZZZ: #{e}")
+    # do nothing
+    console.error(e)
   memo
 , {})

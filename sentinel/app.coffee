@@ -13,7 +13,7 @@ views = _.reduce(require('./views'), (memo, view, key) ->
   memo
 , {})
 
-require('./scheduler')
+require('./schedule')
 
 filters = _.reduce(transitions, (memo, transition, key) ->
   memo[key] = transition.filter.toString()

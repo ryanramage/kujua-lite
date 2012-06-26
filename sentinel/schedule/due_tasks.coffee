@@ -1,10 +1,7 @@
-db = require('./db')
 _ = require('underscore')
+db = require('../db')
 
-check_schedule = ->
-  # only send between 9am and 6pm
-  return unless 8 <= new Date().getHours() <= 18
-
+module.exports = ->
   db.view('kujua-sentinel', 'due_tasks', (err, data) ->
     _.each(data.rows, (row) ->
       { key, value } = row
@@ -25,13 +22,3 @@ check_schedule = ->
       )
     )
   )
-
-  next_heartbeat = new Date()
-  now = new Date().getTime()
-  next_heartbeat.setHours(next_heartbeat.getHours() + 1)
-  next_heartbeat.setMinutes(0, 0, 0)
-  next_heartbeat = next_heartbeat.getTime() - now
-  console.log("Checking again in #{next_heartbeat} milliseconds...")
-  setTimeout(check_schedule, next_heartbeat)
-
-check_schedule()
