@@ -5,6 +5,7 @@
     "dependencies": {
       "async": "latest",
       "coffee-script": "latest",
+      "epi-week": "latest",
       "felix-couchdb": "latest",
       "underscore": "latest"
     },
