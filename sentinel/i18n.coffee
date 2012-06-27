@@ -107,6 +107,9 @@ i18n = new Jed(
 )
 
 module.exports = (key, args...) ->
-  domain = i18n.translate(key).onDomain(locale)
-  debugger
-  domain.fetch.apply(domain, args)
+  try
+    domain = i18n.translate(key).onDomain(locale)
+    domain.fetch.apply(domain, args)
+  catch e
+    console.error("Error in translation: #{e.message}")
+    key
