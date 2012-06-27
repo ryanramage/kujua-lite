@@ -1,5 +1,6 @@
 Transition = require('./transition')
 ids = require('../lib/ids')
+i18n = require('../i18n')
 _ = require('underscore')
 
 module.exports = new Transition(
@@ -34,7 +35,14 @@ module.exports = new Transition(
       weeks = Math.round(interval / ( 7 * 24 * 60 * 60 * 1000))
 
       tasks.unshift(
-        messages: [ to: from, message: "Thank you for registering #{patient_name}. Patient ID is #{_.first(patient_identifiers)}. Next ANC visit is in #{weeks} weeks." ]
+        messages: [
+          {
+            to: from
+            message: i18n('Thank you for registering %1$s. Patient ID is %2$s. Next ANC visit is in %3$s weeks.',
+              patient_name, _.first(patient_identifiers), weeks
+            )
+          }
+        ]
         state: 'pending'
       )
   calculateDate: (doc, weeks) ->
@@ -52,26 +60,49 @@ module.exports = new Transition(
       if reminder_date > now
         scheduled_tasks.push(
           due: reminder_date.getTime()
-          messages: [ to: from, message: "Greetings, #{name}. #{patient_name} is due for an ANC visit this week." ]
+          messages: [
+            {
+              to: from
+              message: i18n('Greetings, %1$s. %2$s is due for an ANC visit this week.', name, patient_name)
+            }
+
+          ]
           state: 'scheduled'
           type: 'anc_visit'
         )
     , @)
     scheduled_tasks.push(
       due: @calculateDate(doc, 32).getTime()
-      messages: [ to: from, message: "Greetings, #{name}.  It's now #{patient_name}'s 8th month of pregnancy. If you haven't given Miso, please distribute. Make birth plan now. Thank you!" ]
+      messages: [
+        {
+          to: from
+          message: i18n("Greetings, %1$s. It's now %2$s's 8th month of pregnancy. If you haven't given Miso, please distribute. Make birth plan now. Thank you!",
+            name, patient_name
+          )
+        }
+      ]
       state: 'scheduled'
       type: 'miso_reminder'
     )
     scheduled_tasks.push(
       due: @calculateDate(doc, 37).getTime()
-      messages: [ to: from, message: "Greetings, #{name}. #{patient_name} is due to deliver soon." ]
+      messages: [
+        {
+          to: from
+          message: i18n("Greetings, %1$s. %2$s is due to deliver soon.", name, patient_name)
+        }
+      ]
       state: 'scheduled'
       type: 'upcoming_delivery'
     )
     scheduled_tasks.push(
       due: @calculateDate(doc, 41).getTime()
-      messages: [ to: from, message: "Greetings, #{name}. Please submit the birth report for #{patient_name}." ]
+      messages: [
+        {
+          to: from
+          message: i18n("Greetings, %1$s. Please submit the birth report for %2$s.", name, patient_name)
+        }
+      ]
       state: 'scheduled'
       type: 'outcome_request'
     )

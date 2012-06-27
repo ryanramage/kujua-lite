@@ -1,6 +1,7 @@
 _ = require('underscore')
 db = require('../db')
 epi = require('epi-week')
+i18n = require('../i18n')
 
 remindEveryone = (recipients) ->
   { week, year } = epi()
@@ -14,7 +15,12 @@ remindEveryone = (recipients) ->
         task = {
           week: week
           year: year
-          messages: [ to: phone, message: "This is a reminder to submit your report for week #{week} of #{year}. Thank you!" ]
+          messages: [
+            {
+              to: phone
+              message: i18n("This is a reminder to submit your report for week %1$s of %2$s. Thank you!", week, year)
+            }
+          ]
           type: 'prompt'
           state: 'pending'
         }
@@ -62,7 +68,12 @@ remindNonResponders = ->
               {
                 week: week
                 year: year
-                messages: [ to: phone, message: "You have not yet submitted your report for week #{week} of #{year}. Please do so as soon as possible. Thanks!" ]
+                messages: [
+                  {
+                    to: phone
+                    message: i18n("You have not yet submitted your report for week %1$s of %2$s. Please do so as soon as possible. Thanks!", week, year)
+                  }
+                ]
                 type: 'nonresponder_prompt'
                 state: 'pending'
               }

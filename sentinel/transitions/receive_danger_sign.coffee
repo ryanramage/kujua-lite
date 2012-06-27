@@ -1,6 +1,7 @@
 Transition = require('./transition')
 _ = require('underscore')
 utils = require('../lib/utils')
+i18n = require('../i18n')
 
 module.exports = new Transition(
   filter: (doc) ->
@@ -11,7 +12,12 @@ module.exports = new Transition(
     { danger_sign, from, patient_name, tasks } = doc
     name = utils.getClinicName(doc)
     tasks.push(
-      messages: [ to: from, message: "Thank you. Danger sign #{danger_sign} has been recorded." ]
+      messages: [
+        {
+          to: from
+          message: i18n("Thank you. Danger sign %1$s has been recorded.", danger_sign)
+        }
+      ]
       state: 'pending'
     )
     parent_phone = utils.getParentPhone(doc)
@@ -31,12 +37,17 @@ module.exports = new Transition(
         _.each(scheduled_tasks, (task) ->
           { messages, type } = task
           if type is 'upcoming_delivery'
-            messages[0].message = "Greetings, #{name}. #{patient_name} is due to deliver soon. This pregnancy has been flagged as high-risk."
+            messages[0].message = i18n("Greetings, %1$s. %2$s is due to deliver soon. This pregnancy has been flagged as high-risk.", name, patient_name)
         )
         @db.saveDoc(registration)
         if parent_phone
           tasks.push(
-            messages: [ to: parent_phone, message: "#{name} has reported danger sign #{danger_sign} is present in #{patient_name}. Please follow up." ]
+            messages: [
+              {
+                to: parent_phone
+                message: i18n("%1$s has reported danger sign %2$s is present in %3$s. Please follow up.", name, danger_sign, patient_name)
+              }
+            ]
             state: 'pending'
           )
           @db.saveDoc(doc, @callback)

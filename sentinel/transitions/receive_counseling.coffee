@@ -1,5 +1,6 @@
 Transition = require('./transition')
 _ = require('underscore')
+i18n = require('../i18n')
 
 module.exports = new Transition(
   filter: (doc) ->
@@ -14,7 +15,12 @@ module.exports = new Transition(
     { from, related_entities, tasks } = doc
     name = related_entities?.clinic?.name or 'health volunteer'
     tasks.push(
-      messages: [ to: from, message: "Thank you, #{name}. ANC counseling visit has been recorded." ]
+      messages: [
+        {
+          to: from
+          message: i18n("Thank you, %1$s. ANC counseling visit has been recorded.", name)
+        }
+      ]
       state: 'pending'
     )
   unscheduleReminders: (doc) ->
