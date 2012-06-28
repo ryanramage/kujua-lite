@@ -21,11 +21,8 @@ module.exports = new Transition(
       state: 'pending'
     )
     parent_phone = utils.getParentPhone(doc)
-    @db.view('kujua-sentinel', 'ohw_registered_patients', key: doc.patient_id, limit: 1, (err, data) =>
-      { rows } = data
-      if rows.length is 1
-        row = rows[0]
-        registration = row.value
+    utils.getOHWRegistration(doc.patient_id, (err, registration) =>
+      if registration
         { danger_signs, patient_name, scheduled_tasks } = registration
 
         name = utils.getClinicName(doc)
