@@ -31,3 +31,27 @@ module.exports =
     _.extend(task, options)
 
     doc.tasks.push(task)
+  addScheduledMessage: (doc, options = {}) ->
+    doc.scheduled_tasks ?= []
+
+    { due, message, phone } = options
+
+    delete options.message
+    delete options.due
+    delete options.phone
+
+    task =
+      due: due.getTime()
+      messages: [
+        to: phone
+        message: message
+      ]
+      state: 'scheduled'
+
+    _.extend(task, options)
+    doc.scheduled_tasks.push(task)
+  clearScheduledMessages: (doc, types...) ->
+    doc.scheduled_tasks ?= []
+    doc.scheduled_tasks = _.reject(doc.scheduled_tasks, (task) ->
+      _.include(types, task.type)
+    )

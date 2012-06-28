@@ -13,7 +13,6 @@ module.exports = new Transition(
     { doc } = change
     { patient_id } = doc
     utils.getOHWRegistration(patient_id, (err, registration) =>
-      debugger
       clinic_phone = utils.getClinicPhone(doc)
       if registration
         { patient_name } = registration
