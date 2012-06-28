@@ -46,7 +46,7 @@ module.exports =
         to: phone
         message: message
       ]
-      state: 'scheduled'
+      state: if doc.muted then 'muted' else 'scheduled'
 
     _.extend(task, options)
     doc.scheduled_tasks.push(task)
@@ -55,3 +55,17 @@ module.exports =
     doc.scheduled_tasks = _.reject(doc.scheduled_tasks, (task) ->
       _.include(types, task.type)
     )
+  unmuteScheduledMessages: (doc) ->
+    doc.scheduled_tasks ?= []
+    doc.scheduled_tasks = _.compact(_.map(doc.scheduled_tasks, (task) ->
+      if new Date(task.due) > new Date() and task.state is 'muted'
+        task.state = 'scheduled'
+        task
+    ))
+  muteScheduledMessages: (doc) ->
+    doc.scheduled_tasks ?= []
+    doc.scheduled_tasks = _.map(doc.scheduled_tasks, (task) ->
+      task.state = 'muted'
+      task
+    )
+

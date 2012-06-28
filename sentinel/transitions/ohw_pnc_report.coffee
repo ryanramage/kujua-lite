@@ -20,7 +20,6 @@ module.exports = new Transition(
         @callback(err, null)
       else
         previous_weight = registration.child_weight or registration.child_birth_weight
-        debugger
         if child_weight isnt 'Normal' and previous_weight is 'Normal'
           utils.addMessage(doc, clinic_phone, i18n("Thank you, %1$s. This child is low birth weight. provide extra thermal protection for baby, feed the baby every two hours, visit the family every day to check the baby for the first week, watch for signs of breathing difficulty. Refer danger signs immediately to health facility.", clinic_name))
         else
