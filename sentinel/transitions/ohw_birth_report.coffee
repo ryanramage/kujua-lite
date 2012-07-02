@@ -14,6 +14,9 @@ module.exports = new Transition(
   onMatch: (change) ->
     { doc } = change
     { birth_weight, days_since_delivery, outcome_child, patient_id, reported_date } = doc
+
+    reported_date = date.getDate() if date.isSynthetic()
+
     utils.getOHWRegistration(patient_id, (err, registration) =>
       if registration
         { patient_name } = registration
@@ -40,7 +43,9 @@ module.exports = new Transition(
             utils.addMessage(doc, clinic_phone, i18n("Thank you, %1$s. This child (ID %2$s) is low birth weight. Provide extra thermal protection for baby, feed the baby every two hours, visit the family every day to check the baby for the first week, watch for signs of breathing difficulty. Refer danger signs immediately to health facility.", clinic_name, child_id))
             utils.addMessage(doc, parent_phone, i18n("%1$s has reported the child of %2$s as %3$s birth weight.", clinic_name, patient_name, birth_weight))
             @scheduleReminders(registration, [1..7])
-        @db.saveDoc(registration)
+        @db.saveDoc(registration, (err, result) ->
+          debugger
+        )
       else
         clinic_phone = utils.getClinicPhone(doc)
         if clinic_phone
@@ -50,7 +55,7 @@ module.exports = new Transition(
       @db.saveDoc(doc)
     )
   scheduleReminders: (registration, days...) ->
-    utils.clearScheduledMessages(registration, 'anc_visit', 'miso_reminder', 'upcoming_delivery', 'pnc_visit', 'pnc_reminder', 'outcome_request')
+    utils.clearScheduledMessages(registration, 'anc_visit', 'miso_reminder', 'upcoming_delivery', 'pnc_visit', 'outcome_request')
 
     { child_birth_date, patient_name } = registration
 
