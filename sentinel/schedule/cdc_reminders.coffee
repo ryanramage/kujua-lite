@@ -5,7 +5,7 @@ epi = require('epi-week')
 i18n = require('../i18n')
 
 remindEveryone = (recipients) ->
-  { week, year } = epi()
+  { week, year } = epi(date.getDate())
   db.view('kujua-base', 'clinic_by_phone', (err, data) ->
     throw err if err
     recipients = _.pluck(data.rows, 'value')
