@@ -1,3 +1,4 @@
 couchdb = require('felix-couchdb')
-client = couchdb.createClient(5984, 'localhost', 'admin', 'admin')
+{ host, port, username, password } = require('./.env')
+client = couchdb.createClient(port, host, username, password)
 module.exports = client.db('kujua')
