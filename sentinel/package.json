@@ -8,6 +8,7 @@
       "epi-week": "latest",
       "felix-couchdb": "latest",
       "jed": "latest",
+      "optimist": "latest",
       "underscore": "latest"
     },
     "version": "0.0.1"

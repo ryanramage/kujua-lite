@@ -1,5 +1,6 @@
 _ = require('underscore')
 db = require('../db')
+date = require('../date')
 epi = require('epi-week')
 i18n = require('../i18n')
 
@@ -48,7 +49,7 @@ remindEveryone = (recipients) ->
 
 
 remindNonResponders = ->
-  last_week = new Date()
+  last_week = date.getDate()
   last_week.setDate(last_week.getDate() - 1)
   { week, year } = epi(last_week) # reminder is for the week just gone
   db.view('kujua-sentinel', 'cdc_reminders', (err, data) ->
@@ -86,7 +87,7 @@ remindNonResponders = ->
   )
 
 module.exports = ->
-  day = new Date().getDay()
+  day = date.getDate().getDay()
   if day is 5 # Friday
     remindEveryone()
   else if day is 0 # Sunday

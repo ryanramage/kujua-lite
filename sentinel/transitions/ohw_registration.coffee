@@ -2,6 +2,7 @@ Transition = require('./transition')
 ids = require('../lib/ids')
 i18n = require('../i18n')
 _ = require('underscore')
+date = require('../date')
 
 module.exports = new Transition(
   filter: (doc) ->
@@ -15,7 +16,7 @@ module.exports = new Transition(
     # set conception/expected date
     weeks = Number(doc.last_menstrual_period)
     if _.isNumber(weeks)
-      lmp = new Date()
+      lmp = date.getDate()
       lmp.setHours(0, 0, 0, 0) # "midnight" it
       lmp.setDate(lmp.getDate() - (7 * weeks))
       expected_date = new Date(lmp.getTime())
@@ -31,7 +32,7 @@ module.exports = new Transition(
       task.type is 'anc_visit'
     )
     if visit
-      interval = visit.due - new Date().getTime()
+      interval = visit.due - date.getDate().getTime()
       weeks = Math.round(interval / ( 7 * 24 * 60 * 60 * 1000))
 
       tasks.unshift(
@@ -53,7 +54,7 @@ module.exports = new Transition(
     doc.scheduled_tasks ?= []
     { from, lmp_date, patient_name, related_entities, scheduled_tasks, tasks } = doc
     lmp = new Date(lmp_date)
-    now = new Date()
+    now = date.getDate()
     name = related_entities?.clinic?.name or 'health volunteer'
     _.each([16, 24, 32, 36], (weeks) ->
       reminder_date = @calculateDate(doc, weeks)

@@ -1,6 +1,7 @@
 fs = require('fs')
 _ = require('underscore')
 async = require('async')
+date = require('../date')
 
 tasks = _.compact(_.map(fs.readdirSync('./schedule'), (file) ->
   try
@@ -12,7 +13,7 @@ tasks = _.compact(_.map(fs.readdirSync('./schedule'), (file) ->
 
 check_schedule = ->
   # only send between 9am and 6pm
-  if 8 <= new Date().getHours() <= 18
+  if 8 <= date.getDate().getHours() <= 18
     async.forEach(tasks, (task) ->
       task()
     , (err) ->

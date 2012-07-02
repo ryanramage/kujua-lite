@@ -50,6 +50,14 @@ module.exports =
 
     _.extend(task, options)
     doc.scheduled_tasks.push(task)
+  obsoleteScheduledMessages: (doc, type, before) ->
+    doc.scheduled_tasks ?= []
+    size_before = doc.scheduled_tasks.length
+    doc.scheduled_tasks = _.reject(doc.scheduled_tasks, (task) ->
+      type is task.type and task.due < before
+    )
+    size_after = doc.scheduled_tasks.length
+    size_before isnt size_after
   clearScheduledMessages: (doc, types...) ->
     doc.scheduled_tasks ?= []
     doc.scheduled_tasks = _.reject(doc.scheduled_tasks, (task) ->

@@ -3,6 +3,7 @@ i18n = require('../i18n')
 _ = require('underscore')
 utils = require('../lib/utils')
 ids = require('../lib/ids')
+date = require('../date')
 
 module.exports = new Transition(
   filter: (doc) ->
@@ -57,7 +58,7 @@ module.exports = new Transition(
     clinic_phone = utils.getClinicPhone(registration)
 
     birth = new Date(child_birth_date)
-    now = new Date()
+    now = date.getDate()
     days = _.flatten(days)
     _.each(days, (day) ->
       marker = new Date(birth.getTime())
