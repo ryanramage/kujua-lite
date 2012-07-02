@@ -87,7 +87,7 @@ remindNonResponders = ->
 
 module.exports = ->
   day = new Date().getDay()
-  if day is 3 # Friday
+  if day is 5 # Friday
     remindEveryone()
   else if day is 0 # Sunday
     remindNonResponders()
