@@ -9,23 +9,22 @@ module.exports = new Transition(
     form is 'ODGR' and tasks.length is 0
   onMatch: (change) ->
     { doc } = change
-    { danger_sign, from, patient_name, tasks } = doc
-    name = utils.getClinicName(doc)
-    tasks.push(
-      messages: [
-        {
-          to: from
-          message: i18n("Thank you. Danger sign %1$s has been recorded.", danger_sign)
-        }
-      ]
-      state: 'pending'
-    )
+    { danger_sign, from, patient_id, patient_name, tasks } = doc
     parent_phone = utils.getParentPhone(doc)
-    utils.getOHWRegistration(doc.patient_id, (err, registration) =>
+    utils.getOHWRegistration(patient_id, (err, registration) =>
       if registration
         { danger_signs, patient_name, scheduled_tasks } = registration
 
         name = utils.getClinicName(doc)
+        tasks.push(
+          messages: [
+            {
+              to: from
+              message: i18n("Thank you. Danger sign %1$s has been recorded.", danger_sign)
+            }
+          ]
+          state: 'pending'
+        )
 
         danger_signs ?= []
         danger_signs.push(doc.danger_sign)
@@ -47,10 +46,12 @@ module.exports = new Transition(
             ]
             state: 'pending'
           )
-          @db.saveDoc(doc, @callback)
         else
           @callback(null, false)
       else
-        @callback(null, false)
+        clinic_phone = utils.getClinicPhone(doc)
+        if clinic_phone
+          utils.addMessage(doc, clinic_phone, i18n("No patient with id '%1$s' found.", patient_id))
+      @db.saveDoc(doc, @callback)
     )
 )
