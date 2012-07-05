@@ -26,7 +26,7 @@ class Transition
       doc.transitions.push(@code)
       doc.transitions = _.unique(doc.transitions)
       @db.saveDoc(doc, (err, result) ->
-        throw JSON.stringify(err) if err
+        console.error(JSON.stringify(err)) if err
       )
   generateFilter: ->
     @filter = ((doc)->
