@@ -8,8 +8,8 @@ module.exports = ->
   overdue.setDate(overdue.getDate() - 7)
 
   db.view('kujua-sentinel', 'due_tasks', startkey: overdue.getTime(), endkey: now.getTime(), (err, data) ->
+    throw JSON.stringify(err) if err
     _.each(data.rows, (row) ->
-      debugger
       due = row.key
       { _id, _rev, index } = row.value
       db.getDoc(_id, _rev, (err, doc) ->

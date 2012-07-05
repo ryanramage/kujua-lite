@@ -4,10 +4,9 @@ i18n = require('../i18n')
 utils = require('../lib/utils')
 
 module.exports = new Transition(
-  filter: (doc) ->
-    { related_entities, form, tasks } = doc
-    { clinic } = related_entities or {}
-    form is 'ONOT' and clinic and tasks.length is 0
+  code: 'ohw_notifications'
+  form: 'ONOT'
+  required_fields: 'related_entities.clinic'
   onMatch: (change) ->
     { doc } = change
     { notifications, patient_id, reason_for_deactivation } = doc
@@ -17,7 +16,7 @@ module.exports = new Transition(
 
     utils.getOHWRegistration(patient_id, (err, registration) =>
       if err
-        @callback(err, null)
+        @complete(err, null)
       else
         { patient_name } = registration
 
@@ -30,8 +29,9 @@ module.exports = new Transition(
 
         registration.muted = not notifications
 
-        @db.saveDoc(doc, @callback)
-        @db.saveDoc(registration)
+        @db.saveDoc(registration, (err) =>
+          @complete(err, doc)
+        )
     )
 )
 

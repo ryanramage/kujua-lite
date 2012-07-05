@@ -4,9 +4,9 @@ utils = require('../lib/utils')
 i18n = require('../i18n')
 
 module.exports = new Transition(
-  filter: (doc) ->
-    { form, tasks } = doc
-    form is 'ODGR' and tasks.length is 0
+  code: 'ohw_danger_sign'
+  form: 'ODGR'
+  required_fields: 'patient_id related_entities.clinic'
   onMatch: (change) ->
     { doc } = change
     { danger_sign, from, patient_id, patient_name, tasks } = doc
@@ -16,15 +16,7 @@ module.exports = new Transition(
         { danger_signs, patient_name, scheduled_tasks } = registration
 
         name = utils.getClinicName(doc)
-        tasks.push(
-          messages: [
-            {
-              to: from
-              message: i18n("Thank you. Danger sign %1$s has been recorded.", danger_sign)
-            }
-          ]
-          state: 'pending'
-        )
+        utils.addMessage(doc, from, i18n("Thank you. Danger sign %1$s has been recorded.", danger_sign))
 
         danger_signs ?= []
         danger_signs.push(doc.danger_sign)
@@ -35,23 +27,15 @@ module.exports = new Transition(
           if type is 'upcoming_delivery'
             messages[0].message = i18n("Greetings, %1$s. %2$s is due to deliver soon. This pregnancy has been flagged as high-risk.", name, patient_name)
         )
-        @db.saveDoc(registration)
         if parent_phone
-          tasks.push(
-            messages: [
-              {
-                to: parent_phone
-                message: i18n("%1$s has reported danger sign %2$s is present in %3$s. Please follow up.", name, danger_sign, patient_name)
-              }
-            ]
-            state: 'pending'
-          )
-        else
-          @callback(null, false)
+          utils.addMessage(doc, parent_phone, i18n("%1$s has reported danger sign %2$s is present in %3$s. Please follow up.", name, danger_sign, patient_name))
+        @db.saveDoc(registration, (err) =>
+          @complete(err, doc)
+        )
       else
         clinic_phone = utils.getClinicPhone(doc)
         if clinic_phone
           utils.addMessage(doc, clinic_phone, i18n("No patient with id '%1$s' found.", patient_id))
-      @db.saveDoc(doc, @callback)
+          @complete(null, doc)
     )
 )

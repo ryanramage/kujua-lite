@@ -6,11 +6,9 @@ ids = require('../lib/ids')
 date = require('../date')
 
 module.exports = new Transition(
-  filter: (doc) ->
-    { related_entities, form, tasks } = doc
-    { clinic } = related_entities or {}
-    tasks ?= []
-    form is 'OBIR' and clinic and tasks.length is 0
+  code: 'ohw_birth_report'
+  form: 'OBIR'
+  required_fields: 'related_entities.clinic patient_id'
   onMatch: (change) ->
     { doc } = change
     { birth_weight, days_since_delivery, outcome_child, patient_id, reported_date } = doc
@@ -43,16 +41,14 @@ module.exports = new Transition(
             utils.addMessage(doc, clinic_phone, i18n("Thank you, %1$s. This child (ID %2$s) is low birth weight. Provide extra thermal protection for baby, feed the baby every two hours, visit the family every day to check the baby for the first week, watch for signs of breathing difficulty. Refer danger signs immediately to health facility.", clinic_name, child_id))
             utils.addMessage(doc, parent_phone, i18n("%1$s has reported the child of %2$s as %3$s birth weight.", clinic_name, patient_name, birth_weight))
             @scheduleReminders(registration, [1..7])
-        @db.saveDoc(registration, (err, result) ->
-          debugger
+        @db.saveDoc(registration, (err, result) =>
+          @complete(err, doc)
         )
       else
         clinic_phone = utils.getClinicPhone(doc)
         if clinic_phone
           utils.addMessage(doc, clinic_phone, i18n("No patient with id '%1$s' found.", patient_id))
-
-      # save messages on the report so it doesn't trip this change again
-      @db.saveDoc(doc)
+          @complete(null, doc)
     )
   scheduleReminders: (registration, days...) ->
     utils.clearScheduledMessages(registration, 'anc_visit', 'miso_reminder', 'upcoming_delivery', 'pnc_visit', 'outcome_request')

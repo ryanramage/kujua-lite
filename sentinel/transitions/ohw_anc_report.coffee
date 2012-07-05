@@ -5,10 +5,9 @@ utils = require('../lib/utils')
 date = require('../date')
 
 module.exports = new Transition(
-  filter: (doc) ->
-    { form, related_entities, tasks } = doc
-    { clinic } = related_entities or {}
-    form is 'OANC' and clinic and tasks.length is 0
+  code: 'ohw_anc_report'
+  form: 'OANC'
+  required_fields: 'related_entities.clinic'
   onMatch: (change) ->
     { doc } = change
     { from, patient_id, tasks } = doc
@@ -16,7 +15,7 @@ module.exports = new Transition(
     clinic_name = utils.getClinicName(doc)
     utils.getOHWRegistration(patient_id, (err, registration) =>
       if err
-        @callback(err, null)
+        @complete(err, null)
       else
         if registration
           utils.addMessage(doc, clinic_phone, i18n("Thank you, %1$s. ANC counseling visit has been recorded.", clinic_name))
@@ -30,7 +29,7 @@ module.exports = new Transition(
             utils.addMessage(doc, clinic_phone, i18n("No patient with id '%1$s' found.", patient_id))
 
         # save messages on the report so it doesn't trip this change again
-        @db.saveDoc(doc, @callback)
+        @complete(null, doc)
     )
 )
 

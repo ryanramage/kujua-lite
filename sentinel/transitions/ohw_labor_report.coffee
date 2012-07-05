@@ -4,11 +4,9 @@ _ = require('underscore')
 utils = require('../lib/utils')
 
 module.exports = new Transition(
-  filter: (doc) ->
-    { related_entities, form, tasks } = doc
-    { clinic } = related_entities or {}
-    tasks ?= []
-    form is 'OLAB' and clinic and tasks.length is 0
+  code: 'ohw_labor_report'
+  form: 'OLAB'
+  required_fields: 'related_entities.clinic patient_id'
   onMatch: (change) ->
     { doc } = change
     { patient_id } = doc
@@ -29,7 +27,6 @@ module.exports = new Transition(
         utils.addMessage(doc, clinic_phone, i18n("No patient with id '%1$s' found.", patient_id))
 
       # save messages on the report so it doesn't trip this change again
-      @db.saveDoc(doc)
+      @complete(err, doc)
     )
 )
-

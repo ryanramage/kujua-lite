@@ -3,27 +3,22 @@ util = require('util')
 
 db = require('./db')
 
-transitions = require('./transitions')
-Transition = require('./transitions/transition')
+{ filters, transitions, views } = require('./transitions')
 
-views = _.reduce(require('./views'), (memo, view, key) ->
-  memo[key] = map: view.map.toString()
+_.each(require('./views'), (view, key) ->
+  views[key] = map: view.map.toString()
   if view.reduce
-    memo[key].reduce = view.reduce.toString()
-  memo
-, {})
+    views[key].reduce = view.reduce.toString()
+)
 
-require('./schedule')
+completeSetup = (err, ok) ->
+  throw err if err
 
-filters = _.reduce(transitions, (memo, transition, key) ->
-  memo[key] = transition.filter.toString()
-  memo
-, {})
-
-attachTransitions = (err, ok) ->
-  _.each(transitions, (transition, filter) ->
-    transition.attach(filter)
+  _.each(transitions, (transition) ->
+    transition.attach()
   )
+  require('./schedule') # start schedule after everything setup
+
 
 db.getDoc('_design/kujua-sentinel', (err, doc) ->
   if err
@@ -31,7 +26,7 @@ db.getDoc('_design/kujua-sentinel', (err, doc) ->
       db.saveDesign('kujua-sentinel',
         filters: filters
         views: views
-      , attachTransitions)
+      , completeSetup)
     else
       throw err
   else
@@ -39,7 +34,7 @@ db.getDoc('_design/kujua-sentinel', (err, doc) ->
         util.inspect(doc.views) isnt util.inspect(views)
       doc.filters = filters
       doc.views = views
-      db.saveDoc(doc, attachTransitions)
+      db.saveDoc(doc, completeSetup)
     else
-      attachTransitions(null, true)
+      completeSetup(null, true)
 )
