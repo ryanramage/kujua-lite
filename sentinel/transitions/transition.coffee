@@ -19,7 +19,8 @@ class Transition
     @onMatch ?= (change) ->
       @complete(null, change.doc)
   complete: (err, doc) ->
-    throw JSON.stringify(err) if err
+    if err
+      throw JSON.stringify(err)
 
     if doc
       doc.transitions ?= []
@@ -67,17 +68,7 @@ class Transition
       .replace(/'__CODE__'/g, "'#{@code}'")
       .replace(/'__DEPENDS__'/g, "'#{@dependencies.join(' ')}'")
       .replace(/'__REQUIRED_FIELDS__'/g, "'#{@required_fields.join(' ')}'")
-  checkChanges: ->
-    @db.changes(filter: "kujua-sentinel/#{@code}", include_docs: true, (err, data) =>
-      _.map(data.results, (change) ->
-        @onMatch(change)
-      , @)
-    )
   attach: ->
-    @checkChanges()
-    setInterval(=>
-      @checkChanges()
-    , 1000 * 60 * 15)
     stream = @db.changesStream(filter: "kujua-sentinel/#{@code}", include_docs: true)
     # TODO add couchdb error handling e.g. if the stream closes
     stream.on('data', (change) =>
