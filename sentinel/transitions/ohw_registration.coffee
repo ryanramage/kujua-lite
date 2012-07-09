@@ -4,6 +4,7 @@ i18n = require('../i18n')
 _ = require('underscore')
 date = require('../date')
 utils = require('../lib/utils')
+config = require('../config')
 
 module.exports = new Transition(
   code: 'ohw_registration'
@@ -47,7 +48,7 @@ module.exports = new Transition(
     lmp = new Date(lmp_date)
     now = date.getDate()
     name = utils.getClinicName(doc)
-    _.each([16, 24, 32, 36], (weeks) ->
+    _.each(config.get('anc_reminder_schedule_weeks'), (weeks) ->
       reminder_date = @calculateDate(doc, weeks)
       if reminder_date > now
         utils.addScheduledMessage(doc,
@@ -58,7 +59,7 @@ module.exports = new Transition(
         )
     , @)
     utils.addScheduledMessage(doc,
-      due: @calculateDate(doc, 32)
+      due: @calculateDate(doc, config.get('miso_reminder_weeks'))
       message: i18n("Greetings, %1$s. It's now %2$s's 8th month of pregnancy. If you haven't given Miso, please distribute. Make birth plan now. Thank you!",
         name, patient_name
       )
@@ -66,13 +67,13 @@ module.exports = new Transition(
       type: 'miso_reminder'
     )
     utils.addScheduledMessage(doc,
-      due: @calculateDate(doc, 37)
+      due: @calculateDate(doc, config.get('upcoming_delivery_weeks'))
       message: i18n("Greetings, %1$s. %2$s is due to deliver soon.", name, patient_name)
       phone: from
       type: 'upcoming_delivery'
     )
     utils.addScheduledMessage(doc,
-      due: @calculateDate(doc, 41)
+      due: @calculateDate(doc, config.get('outcome_request_weeks'))
       message: i18n("Greetings, %1$s. Please submit the birth report for %2$s.", name, patient_name)
       phone: from
       type: 'outcome_request'

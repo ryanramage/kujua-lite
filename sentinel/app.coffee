@@ -2,6 +2,7 @@ _ = require('underscore')
 util = require('util')
 
 db = require('./db')
+config = require('./config')
 
 { filters, transitions, views } = require('./transitions')
 
@@ -14,11 +15,12 @@ _.each(require('./views'), (view, key) ->
 completeSetup = (err, ok) ->
   throw err if err
 
-  _.each(transitions, (transition) ->
-    transition.attach()
+  config.load(->
+    _.each(transitions, (transition) ->
+      transition.attach()
+    )
+    require('./schedule') # start schedule after everything setup
   )
-  require('./schedule') # start schedule after everything setup
-
 
 db.getDoc('_design/kujua-sentinel', (err, doc) ->
   if err

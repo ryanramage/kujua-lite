@@ -3,6 +3,7 @@ _ = require('underscore')
 i18n = require('../i18n')
 utils = require('../lib/utils')
 date = require('../date')
+config = require('../config')
 
 module.exports = new Transition(
   code: 'ohw_anc_report'
@@ -20,7 +21,7 @@ module.exports = new Transition(
         if registration
           utils.addMessage(doc, clinic_phone, i18n("Thank you, %1$s. ANC counseling visit has been recorded.", clinic_name))
           before = date.getDate()
-          before.setDate(before.getDate() + 21)
+          before.setDate(before.getDate() + config.get('obsolete_anc_reminders_days'))
           obsoleteMessages = utils.obsoleteScheduledMessages(registration, 'anc_visit', before: before.getTime())
           @db.saveDoc(registration) if obsoleteMessages
         else
@@ -32,4 +33,3 @@ module.exports = new Transition(
         @complete(null, doc)
     )
 )
-

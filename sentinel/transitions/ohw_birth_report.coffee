@@ -4,6 +4,7 @@ _ = require('underscore')
 utils = require('../lib/utils')
 ids = require('../lib/ids')
 date = require('../date')
+config = require('../config')
 
 module.exports = new Transition(
   code: 'ohw_birth_report'
@@ -21,7 +22,6 @@ module.exports = new Transition(
         clinic_phone = utils.getClinicPhone(registration)
         clinic_name = utils.getClinicName(registration)
         parent_phone = utils.getParentPhone(registration)
-        registration.child_id = child_id = ids.generate("child of #{patient_name}")
         registration.child_outcome = outcome_child
         registration.child_birth_weight = birth_weight
 
@@ -36,11 +36,11 @@ module.exports = new Transition(
         else
           if birth_weight is 'Normal'
             utils.addMessage(doc, clinic_phone, i18n("Thank you, %1$s. Child ID is %2$s", clinic_name, child_id))
-            @scheduleReminders(registration, 1, 3, 7)
+            @scheduleReminders(registration, config.get('pnc_schedule_days'))
           else
             utils.addMessage(doc, clinic_phone, i18n("Thank you, %1$s. This child (ID %2$s) is low birth weight. Provide extra thermal protection for baby, feed the baby every two hours, visit the family every day to check the baby for the first week, watch for signs of breathing difficulty. Refer danger signs immediately to health facility.", clinic_name, child_id))
             utils.addMessage(doc, parent_phone, i18n("%1$s has reported the child of %2$s as %3$s birth weight.", clinic_name, patient_name, birth_weight))
-            @scheduleReminders(registration, [1..7])
+            @scheduleReminders(registration, config.get('low_weight_pnc_schedule_days'))
         @db.saveDoc(registration, (err, result) =>
           @complete(err, doc)
         )
@@ -73,5 +73,3 @@ module.exports = new Transition(
         )
     )
 )
-
-
