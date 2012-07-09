@@ -19,7 +19,8 @@ module.exports = new Transition(
         @complete(err, null)
       else
         if registration
-          utils.addMessage(doc, clinic_phone, i18n("Thank you, %1$s. ANC counseling visit has been recorded.", clinic_name))
+          { patient_name } = registration
+          utils.addMessage(doc, clinic_phone, i18n("Thank you, {{clinic_name}}. ANC counseling visit for {{patient_name}} has been recorded.", clinic_name: clinic_name, patient_name: patient_name))
           before = date.getDate()
           before.setDate(before.getDate() + config.get('obsolete_anc_reminders_days'))
           obsoleteMessages = utils.obsoleteScheduledMessages(registration, 'anc_visit', before: before.getTime())
@@ -27,7 +28,7 @@ module.exports = new Transition(
         else
           clinic_phone = utils.getClinicPhone(doc)
           if clinic_phone
-            utils.addMessage(doc, clinic_phone, i18n("No patient with id '%1$s' found.", patient_id))
+            utils.addMessage(doc, clinic_phone, i18n("No patient with id '{{patient_id}}' found.", patient_id: patient_id))
 
         # save messages on the report so it doesn't trip this change again
         @complete(null, doc)

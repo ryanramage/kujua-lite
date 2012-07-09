@@ -22,10 +22,10 @@ module.exports = new Transition(
 
         if notifications
           utils.unmuteScheduledMessages(registration)
-          utils.addMessage(doc, clinic_phone, i18n("Thank you, %1$s. Notifications for %2$s have been turned on.", clinic_name, patient_name))
+          utils.addMessage(doc, clinic_phone, i18n("Thank you, {{clinic_name}}. Notifications for {{patient_name}} have been turned on.", clinic_name: clinic_name, patient_name: patient_name))
         else
           utils.muteScheduledMessages(registration)
-          utils.addMessage(doc, clinic_phone, i18n("Thank you, %1$s. All notifications for %2$s have been turned off.", clinic_name, patient_name))
+          utils.addMessage(doc, clinic_phone, i18n("Thank you, {{clinic_name}}. All notifications for {{patient_name}} have been turned off.", clinic_name: clinic_name, patient_name: patient_name))
 
         registration.muted = not notifications
 
@@ -34,6 +34,3 @@ module.exports = new Transition(
         )
     )
 )
-
-
-

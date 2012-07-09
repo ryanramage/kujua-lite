@@ -36,8 +36,8 @@ module.exports = new Transition(
       interval = visit.due - date.getDate().getTime()
       weeks = Math.round(interval / ( 7 * 24 * 60 * 60 * 1000))
 
-      utils.addMessage(doc, from, i18n('Thank you for registering %1$s. Patient ID is %2$s. Next ANC visit is in %3$s weeks.',
-        patient_name, _.first(patient_identifiers), weeks
+      utils.addMessage(doc, from, i18n("Thank you for registering {{patient_name}}. Patient ID is {{patient_id}}. Next ANC visit is in {{weeks}} weeks.",
+        patient_name: patient_name, patient_id: _.first(patient_identifiers), weeks: weeks
       ))
   calculateDate: (doc, weeks) ->
     reminder_date = new Date(doc.lmp_date)
@@ -53,28 +53,28 @@ module.exports = new Transition(
       if reminder_date > now
         utils.addScheduledMessage(doc,
           due: reminder_date
-          message: i18n('Greetings, %1$s. %2$s is due for an ANC visit this week.', name, patient_name)
+          message: i18n("Greetings, {{clinic_name}}. {{patient_name}} is due for an ANC visit this week.", clinic_name: name, patient_name: patient_name)
           phone: from
           type: 'anc_visit'
         )
     , @)
     utils.addScheduledMessage(doc,
       due: @calculateDate(doc, config.get('miso_reminder_weeks'))
-      message: i18n("Greetings, %1$s. It's now %2$s's 8th month of pregnancy. If you haven't given Miso, please distribute. Make birth plan now. Thank you!",
-        name, patient_name
+      message: i18n("Greetings, {{clinic_name}}. It's now {{patient_name}}'s 8th month of pregnancy. If you haven't given Miso, please distribute. Make birth plan now. Thank you!",
+        clinic_name: name, patient_name: patient_name
       )
       phone: from
       type: 'miso_reminder'
     )
     utils.addScheduledMessage(doc,
       due: @calculateDate(doc, config.get('upcoming_delivery_weeks'))
-      message: i18n("Greetings, %1$s. %2$s is due to deliver soon.", name, patient_name)
+      message: i18n("Greetings, {{clinic_name}}. {{patient_name}} is due to deliver soon.", clinic_name: name, patient_name: patient_name)
       phone: from
       type: 'upcoming_delivery'
     )
     utils.addScheduledMessage(doc,
       due: @calculateDate(doc, config.get('outcome_request_weeks'))
-      message: i18n("Greetings, %1$s. Please submit the birth report for %2$s.", name, patient_name)
+      message: i18n("Greetings, {{clinic_name}}. Please submit the birth report for {{patient_name}}.", clinic_name: name, patient_name: patient_name)
       phone: from
       type: 'outcome_request'
     )

@@ -2,20 +2,23 @@ db = require('./db')
 
 config = {}
 
+key = 'sentinel-configuration'
+
 fetchConfig = (callback, count = 0) ->
-  db.getDoc('ohw-configuration', (err, doc) ->
+  db.getDoc(key, (err, doc) ->
     if err
       if count is 0
         doc =
-          anc_reminder_schedule_weeks: [16, 24, 32, 36]
-          miso_reminder_weeks: 32
-          upcoming_delivery_weeks: 37
-          outcome_request_weeks: 41
-          pnc_schedule_days: [1, 3, 7]
-          low_weight_pnc_schedule_days: [1..7]
-          obsolete_anc_reminders_days: 21
+          ohw_anc_reminder_schedule_weeks: [16, 24, 32, 36]
+          ohw_miso_reminder_weeks: 32
+          ohw_upcoming_delivery_weeks: 37
+          ohw_outcome_request_weeks: 41
+          ohw_pnc_schedule_days: [1, 3, 7]
+          ohw_low_weight_pnc_schedule_days: [1..7]
+          ohw_obsolete_anc_reminders_days: 21
+          cdc_send_reminders: false
 
-        db.saveDoc('ohw-configuration', doc, fetchConfig(count++))
+        db.saveDoc(key, doc, fetchConfig(callback, count++))
       else
         throw err
     else

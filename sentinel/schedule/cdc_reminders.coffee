@@ -3,6 +3,7 @@ db = require('../db')
 date = require('../date')
 epi = require('epi-week')
 i18n = require('../i18n')
+config = require('../config')
 
 remindEveryone = (recipients) ->
   { week, year } = epi(date.getDate())
@@ -19,7 +20,7 @@ remindEveryone = (recipients) ->
           messages: [
             {
               to: phone
-              message: i18n("This is a reminder to submit your report for week %1$s of %2$s. Thank you!", week, year)
+              message: i18n("This is a reminder to submit your report for week {{week}} of {{year}}. Thank you!", week: week, year: year)
             }
           ]
           type: 'prompt'
@@ -72,7 +73,7 @@ remindNonResponders = ->
                 messages: [
                   {
                     to: phone
-                    message: i18n("You have not yet submitted your report for week %1$s of %2$s. Please do so as soon as possible. Thanks!", week, year)
+                    message: i18n("You have not yet submitted your report for week {{week}} of {{year}}. Please do so as soon as possible. Thanks!", week: week, year: year)
                   }
                 ]
                 type: 'nonresponder_prompt'
@@ -87,8 +88,9 @@ remindNonResponders = ->
   )
 
 module.exports = ->
-  day = date.getDate().getDay()
-  if day is 5 # Friday
-    remindEveryone()
-  else if day is 0 # Sunday
-    remindNonResponders()
+  if config.get('cdc_send_reminders')
+    day = date.getDate().getDay()
+    if day is 5 # Friday
+      remindEveryone()
+    else if day is 0 # Sunday
+      remindNonResponders()

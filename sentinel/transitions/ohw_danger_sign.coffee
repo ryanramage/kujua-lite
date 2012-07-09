@@ -16,7 +16,7 @@ module.exports = new Transition(
         { danger_signs, patient_name, scheduled_tasks } = registration
 
         name = utils.getClinicName(doc)
-        utils.addMessage(doc, from, i18n("Thank you. Danger sign %1$s has been recorded.", danger_sign))
+        utils.addMessage(doc, from, i18n("Thank you. Danger sign {{danger_sign}} has been recorded for {{patient_name}}.", danger_sign: danger_sign, patient_name: patient_name))
 
         danger_signs ?= []
         danger_signs.push(doc.danger_sign)
@@ -25,17 +25,17 @@ module.exports = new Transition(
         _.each(scheduled_tasks, (task) ->
           { messages, type } = task
           if type is 'upcoming_delivery'
-            messages[0].message = i18n("Greetings, %1$s. %2$s is due to deliver soon. This pregnancy has been flagged as high-risk.", name, patient_name)
+            messages[0].message = i18n("Greetings, {{clinic_name}}. {{patient_name}} is due to deliver soon. This pregnancy has been flagged as high-risk.", clinic_name: name, patient_name: patient_name)
         )
         if parent_phone
-          utils.addMessage(doc, parent_phone, i18n("%1$s has reported danger sign %2$s is present in %3$s. Please follow up.", name, danger_sign, patient_name))
+          utils.addMessage(doc, parent_phone, i18n("{{clinic_name}} has reported danger sign {{danger_sign}} is present in {{patient_name}}. Please follow up.", clinic_name: name, danger_sign: danger_sign, patient_name: patient_name))
         @db.saveDoc(registration, (err) =>
           @complete(err, doc)
         )
       else
         clinic_phone = utils.getClinicPhone(doc)
         if clinic_phone
-          utils.addMessage(doc, clinic_phone, i18n("No patient with id '%1$s' found.", patient_id))
+          utils.addMessage(doc, clinic_phone, i18n("No patient with id '{{patient_id}}' found.", patient_id: patient_id))
           @complete(null, doc)
     )
 )
