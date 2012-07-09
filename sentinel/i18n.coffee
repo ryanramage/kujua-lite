@@ -9,12 +9,18 @@ key = 'sentinel-translations'
 fetchConfig = (count = 0) ->
   db.getDoc(key, (err, doc) ->
     if err and count is 0
-      doc = defaults
-      db.saveDoc(key, defaults, fetchConfig(count++))
+      doc =
+        keys: defaults
+      db.saveDoc(key, doc, (err) ->
+        if err
+          throw err
+        else
+          fetchConfig(count++)
+      )
     else if err
       throw err
     else
-      values = _.reduce(doc, (memo, translation) ->
+      values = _.reduce(doc.keys, (memo, translation) ->
         { key, value } = translation
         memo[key] = value
         memo
