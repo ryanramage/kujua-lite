@@ -39,6 +39,10 @@ module.exports = new Transition(
       utils.addMessage(doc, from, i18n("Thank you for registering {{patient_name}}. Patient ID is {{patient_id}}. Next ANC visit is in {{weeks}} weeks.",
         patient_name: patient_name, patient_id: _.first(patient_identifiers), weeks: weeks
       ))
+    else
+      utils.addMessage(doc, from, i18n("Thank you for registering {{patient_name}}. Patient ID is {{patient_id}}.",
+        patient_name: patient_name, patient_id: _.first(patient_identifiers)
+      ))
   calculateDate: (doc, weeks) ->
     reminder_date = new Date(doc.lmp_date)
     reminder_date.setDate(reminder_date.getDate() + (weeks * 7))

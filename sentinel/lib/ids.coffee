@@ -1,38 +1,47 @@
 crypto = require('crypto')
 _ = require('underscore')
+config = require('../config')
 
 LETTERS = 'ABCDEFGHJKLMNPQRSTUVWXYZ'.split('')
+format = undefined
 
 addNumber = (result, number) ->
-  result.unshift(number % 10)
+  result.push(number % 10)
   Math.floor(number / 10)
+
 addLetter = (result, number) ->
-  result.unshift(LETTERS[number % LETTERS.length])
+  result.push(LETTERS[number % LETTERS.length])
   Math.floor(number / LETTERS.length)
 
-addCheckDigit = (nhi) ->
-  total = _.reduce(nhi, (sum, digit, index) ->
-    if index < 3
-      sum += (_.indexOf(LETTERS, digit) + 1) * (7 - index)
+addCheckDigit = (digits) ->
+  offset = format.length + 1
+  total = _.reduce(digits, (sum, digit, index) ->
+    char = format.charAt(index)
+    if /\d/.test(char)
+      sum + (Number(digit) * (offset - index))
+    else if /\w/.test(char)
+      sum + ((_.indexOf(LETTERS, char) + 1) * (offset - index))
     else
-      sum += Number(digit) * (7 - index)
-    sum
+      sum
   , 0)
   result = total % 11
-  nhi.push(if result is 10 then 0 else result)
+  digits.push(if result is 10 then 0 else result)
 
 generate = (s) ->
   sum = crypto.createHash('md5')
   sum.update("#{s}-#{new Date().getTime() * Math.random()}")
   number = parseInt(sum.digest('hex').substring(0, 12), 16)
-  result = []
 
-  number = addNumber(result, number)
-  number = addNumber(result, number)
-  number = addNumber(result, number)
-  number = addLetter(result, number)
-  number = addLetter(result, number)
-  number = addLetter(result, number)
+  format = config.get('id_format') or '111111'
+  result = _.reduce(format.split(''), (memo, char) ->
+    if /\d/.test(char)
+      number = addNumber(memo, number)
+    else if /\w/.test(char)
+      number = addLetter(memo, number)
+    else
+      memo.push(char)
+    memo
+  , [])
 
   addCheckDigit(result)
   result.join('')

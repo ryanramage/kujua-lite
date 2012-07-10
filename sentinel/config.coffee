@@ -17,6 +17,7 @@ fetchConfig = (callback, count = 0) ->
           ohw_low_weight_pnc_schedule_days: [1..7]
           ohw_obsolete_anc_reminders_days: 21
           cdc_send_reminders: false
+          id_format: '111111'
 
         db.saveDoc(key, doc, fetchConfig(callback, count++))
       else
