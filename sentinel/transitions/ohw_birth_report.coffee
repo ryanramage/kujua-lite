@@ -36,11 +36,11 @@ module.exports = new Transition(
         else
           if birth_weight is 'Normal'
             utils.addMessage(doc, clinic_phone, i18n("Thank you, {{clinic_name}}.", clinic_name: clinic_name))
-            @scheduleReminders(registration, config.get('pnc_schedule_days'))
+            @scheduleReminders(registration, config.get('ohw_pnc_schedule_days'))
           else
             utils.addMessage(doc, clinic_phone, i18n("Thank you, {{clinic_name}}. This child is low birth weight. Provide extra thermal protection for baby, feed the baby every two hours, visit the family every day to check the baby for the first week, watch for signs of breathing difficulty. Refer danger signs immediately to health facility.", clinic_name: clinic_name))
             utils.addMessage(doc, parent_phone, i18n("{{clinic_name}} has reported the child of {{patient_name}} as {{birth_weight}} birth weight.", clinic_name: clinic_name, patient_name: patient_name, birth_weight: birth_weight))
-            @scheduleReminders(registration, config.get('low_weight_pnc_schedule_days'))
+            @scheduleReminders(registration, config.get('ohw_low_weight_pnc_schedule_days'))
         @db.saveDoc(registration, (err, result) =>
           @complete(err, doc)
         )

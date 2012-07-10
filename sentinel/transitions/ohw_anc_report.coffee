@@ -22,7 +22,7 @@ module.exports = new Transition(
           { patient_name } = registration
           utils.addMessage(doc, clinic_phone, i18n("Thank you, {{clinic_name}}. ANC counseling visit for {{patient_name}} has been recorded.", clinic_name: clinic_name, patient_name: patient_name))
           before = date.getDate()
-          before.setDate(before.getDate() + config.get('obsolete_anc_reminders_days'))
+          before.setDate(before.getDate() + config.get('ohw_obsolete_anc_reminders_days'))
           obsoleteMessages = utils.obsoleteScheduledMessages(registration, 'anc_visit', before: before.getTime())
           @db.saveDoc(registration) if obsoleteMessages
         else
