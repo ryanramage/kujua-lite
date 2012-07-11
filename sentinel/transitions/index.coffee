@@ -1,32 +1,30 @@
 _ = require('underscore')
 fs = require('fs')
 
-keys = []
-filters = {}
-views = {}
-
-transitions = _.compact(_.map(fs.readdirSync('./transitions'), (file) ->
+result = _.reduce(fs.readdirSync('./transitions'), (memo, file) ->
   try
     unless _.contains(['index.coffee', 'transition.coffee'], file)
       transition = require("./#{file}")
 
       key = file.replace(/\.coffee$/, '')
-      keys.push(key)
+      memo.keys.push(key)
 
       if transition.filter
-        filters[key] = transition.filter.toString()
+        memo.filters[key] = transition.filter.toString()
 
       if transition.view
-        views[key] = transition.view
+        memo.views[key] = transition.view
 
-      transition
+      memo.transitions[key] = transition
   catch e
     # do nothing
     console.error(e)
-))
+  memo
+, {
+  filters: {}
+  keys: []
+  transitions: {}
+  views: {}
+})
 
-module.exports =
-  filters: filters
-  keys: keys
-  transitions: transitions
-  views: views
+module.exports = result

@@ -2,9 +2,7 @@ _ = require('underscore')
 
 class Transition
   constructor: (options = {}) ->
-    { @code, @dependencies, @form, @onMatch, @required_fields } = options
-
-    throw new Error('Code is a required field for a Transition.') unless @code
+    { @dependencies, @form, @onMatch, @required_fields } = options
 
     @required_fields ?= []
     @required_fields = [ @required_fields ] if _.isString(@required_fields)
