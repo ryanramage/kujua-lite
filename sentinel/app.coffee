@@ -7,6 +7,8 @@ config = require('./config')
 { filters, transitions, views } = require('./transitions')
 
 _.each(require('./views'), (view, key) ->
+  throw new Error("Duplicate view #{key} defined.") if views[key]
+
   views[key] = map: view.map.toString()
   if view.reduce
     views[key].reduce = view.reduce.toString()
