@@ -27,4 +27,6 @@ result = _.reduce(fs.readdirSync('./transitions'), (memo, file) ->
   views: {}
 })
 
+result.Transition = require('./transition')
+
 module.exports = result

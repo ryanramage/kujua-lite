@@ -1,7 +1,7 @@
 _ = require('underscore')
 
 class Transition
-  constructor: (options = {}) ->
+  constructor: (@code, options = {}) ->
     { @dependencies, @form, @onMatch, @required_fields } = options
 
     @required_fields ?= []

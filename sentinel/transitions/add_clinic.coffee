@@ -1,8 +1,6 @@
-Transition = require('./transition')
 _ = require('underscore')
 
-module.exports = new Transition(
-  code: 'add_clinic'
+module.exports =
   required_fields: 'form related_entities !related_entities.clinic'
   onMatch: (change) ->
     { doc } = change
@@ -20,4 +18,3 @@ module.exports = new Transition(
         else
           @complete(null, false)
     )
-)

@@ -1,13 +1,15 @@
 vows = require('vows')
 should = require('should')
 
-{ transitions } = require('../transitions')
+{ transitions, Transition } = require('../transitions')
+
 
 vows.describe('test adding clinic details').addBatch(
   'filter generated':
     topic: ->
       filter = undefined
-      eval("""filter = #{transitions['add_clinic'].filter} """)
+      transition = new Transition('add_clinic', transitions.add_clinic)
+      eval("""filter = #{transition.filter} """)
     'filter should trip on doc with form and no clinic': (filter) ->
       filter(
         form: 'ORPT'
@@ -25,4 +27,46 @@ vows.describe('test adding clinic details').addBatch(
         related_entities:
           clinic: {}
       ).should.eql(false)
+  'onMatch with data':
+    topic: ->
+      transition = new Transition('add_clinic', transitions.add_clinic)
+      transition.db =
+        view: (db, view, args, fn) ->
+          fn(null,
+            rows: [
+              value:
+                _id: 1
+                _rev: 1
+                name: 'x'
+            ]
+          )
+      transition
+    'gets clinic': (transition) ->
+      transition.complete = (err, doc) ->
+        doc.related_entities.clinic.name.should.eql('x')
+      transition.onMatch(
+        doc:
+          from: '1'
+          related_entities:
+            clinic: null
+      )
+  'onMatch with no matching row':
+    topic: ->
+      transition = new Transition('add_clinic', transitions.add_clinic)
+      transition.db =
+        view: (db, view, args, fn) ->
+          fn(null,
+            rows: [ ]
+          )
+      transition
+    'gets clinic': (transition) ->
+      transition.complete = (err, doc) ->
+        should.not.exist(err)
+        doc.should.not.be.ok
+      transition.onMatch(
+        doc:
+          from: '1'
+          related_entities:
+            clinic: null
+      )
 ).export(module)

@@ -4,7 +4,7 @@ util = require('util')
 db = require('./db')
 config = require('./config')
 
-{ filters, transitions, views } = require('./transitions')
+{ filters, transitions, Transition, views } = require('./transitions')
 
 _.each(require('./views'), (view, key) ->
   throw new Error("Duplicate view #{key} defined.") if views[key]
@@ -18,8 +18,8 @@ completeSetup = (err, ok) ->
   throw err if err
 
   config.load(->
-    _.each(transitions, (transition) ->
-      transition.attach()
+    _.each(transitions, (options, code) ->
+      new Transition(code, options).attach()
     )
     require('./schedule') # start schedule after everything setup
   )

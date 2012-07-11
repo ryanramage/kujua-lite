@@ -81,4 +81,3 @@ module.exports =
       task.state = 'muted'
       task
     )
-
