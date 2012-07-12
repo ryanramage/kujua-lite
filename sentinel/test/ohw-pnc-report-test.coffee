@@ -5,44 +5,15 @@ should = require('should')
 
 getTransition = (weight) ->
   transition = new Transition('ohw_pnc_report', transitions.ohw_pnc_report)
+
   transition.db =
     saveDoc: (registration, callback) ->
-      callback()
-
+      callback(null)
   transition.getOHWRegistration = (patient_id, callback) ->
-    obsolete_date = new Date()
-    obsolete_date.setDate(obsolete_date.getDate() + 20)
-
-    okay_date = new Date()
-    okay_date.setDate(okay_date.getDate() + 22)
-
     if patient_id is 'AA'
       callback(null,
         child_weight: weight
         patient_name: 'Patient'
-        scheduled_tasks: [
-          {
-            due: obsolete_date.getTime()
-            marker: 'obsolete'
-            state: 'scheduled'
-            messages: []
-            type: 'anc_visit'
-          }
-          {
-            due: okay_date.getTime()
-            marker: 'okay'
-            state: 'scheduled'
-            messages: []
-            type: 'anc_visit'
-          }
-          {
-            due: obsolete_date.getTime()
-            marker: 'other'
-            state: 'scheduled'
-            messages: []
-            type: 'other_thing'
-          }
-        ]
       )
     else
       callback(null, false)
@@ -52,8 +23,7 @@ vows.describe('test receiving pnc reports').addBatch(
   'filter generated for pnc reports':
     topic: ->
       filter = undefined
-      transition = new Transition('ohw_pnc_report', transitions.ohw_pnc_report)
-      eval("""filter = #{transition.filter} """)
+      eval("""filter = #{getTransition().filter} """)
     'filter should require a clinic': (filter) ->
       filter(
         form: 'OPNC'
@@ -75,6 +45,16 @@ vows.describe('test receiving pnc reports').addBatch(
   'onMatch adds Normal acknowledgement':
     topic: ->
       getTransition('Normal')
+    'respond to invalid patient': (transition) ->
+      transition.complete = (err, doc) ->
+        doc.tasks.length.should.eql(1)
+        message = doc.tasks[0].messages[0].message
+        message.should.be.eql("No patient with id 'QQ' found.")
+      transition.onMatch(
+        doc:
+          child_weight: 'Normal'
+          patient_id: 'QQ'
+      )
     'tasks added for normal weight': (transition) ->
       transition.complete = (err, doc) ->
         doc.tasks.length.should.eql(1)
