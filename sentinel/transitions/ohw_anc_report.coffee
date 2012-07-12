@@ -17,7 +17,7 @@ module.exports =
           before.setDate(before.getDate() + @config.get('ohw_obsolete_anc_reminders_days'))
           obsoleteMessages = @obsoleteScheduledMessages(registration, 'anc_visit', before.getTime())
           if obsoleteMessages
-            @db.saveDoc(registration, (err, ok) ->
+            @db.saveDoc(registration, (err) =>
               @complete(err, doc)
             )
           else

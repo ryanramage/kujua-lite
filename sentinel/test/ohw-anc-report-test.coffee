@@ -76,7 +76,7 @@ vows.describe('test receiving anc reports').addBatch(
         task.messages.length.should.eql(1)
         message = task.messages[0]
         message.to.should.eql('1234')
-        message.message.should.eql('Thank you, foo. NC counseling visit for Patient has been recorded.')
+        message.message.should.eql('Thank you, foo. ANC counseling visit for Patient has been recorded.')
       transition.onMatch(
         doc:
           patient_id: 'AA'
