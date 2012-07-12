@@ -17,6 +17,11 @@ module.exports =
         registration = data.rows?[0]?.value
         callback(null, registration)
     )
+  filterScheduledMessages: (doc, type) ->
+    { scheduled_tasks } = doc
+    _.filter(scheduled_tasks, (task) ->
+      task.type is type
+    )
   findScheduledMessage: (doc, type) ->
     { scheduled_tasks } = doc
     _.find(scheduled_tasks, (task) ->

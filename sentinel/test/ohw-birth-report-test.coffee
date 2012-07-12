@@ -4,7 +4,7 @@ _ = require('underscore')
 
 { transitions, Transition } = require('../transitions')
 
-getTransition = (properties) ->
+getTransition = (properties, task_count = 0) ->
   transition = new Transition('ohw_birth_report', transitions.ohw_birth_report)
   transition.db =
     saveDoc: (registration, callback) ->
@@ -12,6 +12,8 @@ getTransition = (properties) ->
         should.exist(registration[key])
         registration[key].should.eql(property)
       )
+      unless task_count is 0
+        transition.filterScheduledMessages(registration, 'pnc_visit').length.should.eql(task_count)
       callback(null)
 
   transition.getOHWRegistration = (patient_id, callback) ->
@@ -66,7 +68,7 @@ vows.describe('test receiving birth reports').addBatch(
       birth_date = new Date()
       birth_date.setHours(0,0,0,0)
       birth_date.setDate(birth_date.getDate() - 2)
-      getTransition(child_outcome: 'Alive but sick', child_birth_weight: 'Low - Yellow', child_birth_date: birth_date.getTime())
+      getTransition(child_outcome: 'Alive but sick', child_birth_weight: 'Low - Yellow', child_birth_date: birth_date.getTime(), 5)
     'normal weight': (transition) ->
       transition.complete = (err, doc) ->
         tasks = doc.tasks
