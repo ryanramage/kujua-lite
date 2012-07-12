@@ -3,8 +3,12 @@ should = require('should')
 
 { transitions, Transition } = require('../transitions')
 
-getTransition = ->
-  transition = new Transition('ohw_anc_report', transitions.ohw_anc_report)
+getTransition = (weight) ->
+  transition = new Transition('ohw_pnc_report', transitions.ohw_pnc_report)
+  transition.db =
+    saveDoc: (registration, callback) ->
+      callback()
+
   transition.getOHWRegistration = (patient_id, callback) ->
     obsolete_date = new Date()
     obsolete_date.setDate(obsolete_date.getDate() + 20)
@@ -14,6 +18,7 @@ getTransition = ->
 
     if patient_id is 'AA'
       callback(null,
+        child_weight: weight
         patient_name: 'Patient'
         scheduled_tasks: [
           {
@@ -43,15 +48,15 @@ getTransition = ->
       callback(null, false)
   transition
 
-vows.describe('test receiving anc reports').addBatch(
-  'filter generated for anc reports':
+vows.describe('test receiving pnc reports').addBatch(
+  'filter generated for pnc reports':
     topic: ->
       filter = undefined
-      transition = new Transition('ohw_anc_report', transitions.ohw_anc_report)
+      transition = new Transition('ohw_pnc_report', transitions.ohw_pnc_report)
       eval("""filter = #{transition.filter} """)
     'filter should require a clinic': (filter) ->
       filter(
-        form: 'OANC'
+        form: 'OPNC'
         related_entities:
           clinic: null
       ).should.eql(false)
@@ -63,22 +68,21 @@ vows.describe('test receiving anc reports').addBatch(
       ).should.eql(false)
     'filter should work with right form and clinic': (filter) ->
       filter(
-        form: 'OANC'
+        form: 'OPNC'
         related_entities:
           clinic: {}
       ).should.eql(true)
-  'onMatch adds acknowledgement':
-    topic: getTransition
-    'tasks added': (transition) ->
+  'onMatch adds Normal acknowledgement':
+    topic: ->
+      getTransition('Normal')
+    'tasks added for normal weight': (transition) ->
       transition.complete = (err, doc) ->
         doc.tasks.length.should.eql(1)
-        task = doc.tasks[0]
-        task.messages.length.should.eql(1)
-        message = task.messages[0]
-        message.to.should.eql('1234')
-        message.message.should.eql('Thank you, foo. NC counseling visit for Patient has been recorded.')
+        message = doc.tasks[0].messages[0].message
+        message.should.be.eql('Thank you, foo. PNC counseling visit has been recorded for Patient.')
       transition.onMatch(
         doc:
+          child_weight: 'Normal'
           patient_id: 'AA'
           related_entities:
             clinic:
@@ -86,12 +90,17 @@ vows.describe('test receiving anc reports').addBatch(
                 phone: '1234'
               name: 'foo'
       )
-  'onMatch obsoletes messages':
-    topic: getTransition
-    'removes tasks for registration': (transition) ->
+  'onMatch adds low weight acknowledgement':
+    topic: ->
+      getTransition('Normal')
+    'tasks added for low weight': (transition) ->
       transition.complete = (err, doc) ->
+        doc.tasks.length.should.eql(1)
+        message = doc.tasks[0].messages[0].message
+        /low birth weight/.test(message).should.be.ok
       transition.onMatch(
         doc:
+          child_weight: 'Low - Yellow'
           patient_id: 'AA'
           related_entities:
             clinic:
@@ -99,20 +108,18 @@ vows.describe('test receiving anc reports').addBatch(
                 phone: '1234'
               name: 'foo'
       )
-  'onMatch errors for unknown patient':
-    topic: getTransition
-    'tasks added': (transition) ->
+  'onMatch does not add low weight acknowledgement if already sent':
+    topic: ->
+      getTransition('Low - Yellow')
+    'tasks added for low weight': (transition) ->
       transition.complete = (err, doc) ->
         doc.tasks.length.should.eql(1)
-        task = doc.tasks[0]
-        task.messages.length.should.eql(1)
-        message = task.messages[0]
-        message.to.should.eql('1234')
-        message.message.should.eql("No patient with id 'QQ' found.")
-
+        message = doc.tasks[0].messages[0].message
+        message.should.be.eql('Thank you, foo. PNC counseling visit has been recorded for Patient.')
       transition.onMatch(
         doc:
-          patient_id: 'QQ'
+          child_weight: 'Low - Yellow'
+          patient_id: 'AA'
           related_entities:
             clinic:
               contact:
@@ -120,4 +127,3 @@ vows.describe('test receiving anc reports').addBatch(
               name: 'foo'
       )
 ).export(module)
-

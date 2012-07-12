@@ -16,6 +16,10 @@ class Transition
     _.extend(@, options)
     @onMatch ?= (change) ->
       @complete(null, change.doc)
+    _.extend(@, require('../lib/utils'))
+    @i18n = require('../i18n')
+    @date = require('../date')
+    @config = require('../config')
   complete: (err, doc) ->
     if err
       throw JSON.stringify(err)
