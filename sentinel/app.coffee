@@ -4,15 +4,14 @@ util = require('util')
 db = require('./db')
 config = require('./config')
 
-{ filters, transitions, Transition, views } = require('./transitions')
+{ filters, transitions, Transition } = require('./transitions')
 
-_.each(require('./views'), (view, key) ->
-  throw new Error("Duplicate view #{key} defined.") if views[key]
-
-  views[key] = map: view.map.toString()
-  if view.reduce
-    views[key].reduce = view.reduce.toString()
-)
+views = _.reduce(require('./views'), (memo, view, key) ->
+  memo[key] =
+    map: view.map.toString()
+    reduce: view.reduce?.toString()
+  memo
+, {})
 
 completeSetup = (err, ok) ->
   throw err if err

@@ -2,18 +2,12 @@ _ = require('underscore')
 
 class Transition
   constructor: (@code, options = {}) ->
-    { @dependencies, @form, @onMatch, @required_fields } = options
+    { @form, @onMatch, @required_fields } = options
 
     @required_fields ?= []
-    @required_fields = [ @required_fields ] if _.isString(@required_fields)
-
-    @dependencies ?= []
-    @dependencies = [ @dependencies ] if _.isString(@dependencies)
-
-    @generateFilter()
+    @required_fields = @required_fields.split(' ') if _.isString(@required_fields)
 
     @db = require('../db')
-    _.extend(@, options)
     @onMatch ?= (change) ->
       @complete(null, change.doc)
     _.extend(@, require('../lib/utils'))
@@ -31,8 +25,8 @@ class Transition
       @db.saveDoc(doc, (err, result) ->
         console.error(JSON.stringify(err)) if err
       )
-  generateFilter: ->
-    @filter = ((doc)->
+  generateFilter: (code) ->
+    ((doc)->
       transitions = doc.transitions ?= []
 
       return false if transitions.indexOf('__CODE__') >= 0
@@ -60,15 +54,10 @@ class Transition
         test(doc, field.replace(/^!/, ''), negate)
       )
 
-      deps = '__DEPENDS__'.split(' ')
-      deps_met = deps.every((dependency) ->
-        dependency is '' or transitions.indexOf(dependency) >= 0
-      )
-      deps_met and fields_match
+      fields_match
     ).toString()
       .replace(/'__FORM__'/g, "'#{@form or ''}'")
-      .replace(/'__CODE__'/g, "'#{@code}'")
-      .replace(/'__DEPENDS__'/g, "'#{@dependencies.join(' ')}'")
+      .replace(/'__CODE__'/g, "'#{code}'")
       .replace(/'__REQUIRED_FIELDS__'/g, "'#{@required_fields.join(' ')}'")
   attach: ->
     stream = @db.changesStream(filter: "kujua-sentinel/#{@code}", include_docs: true)
