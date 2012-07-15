@@ -62,9 +62,6 @@ vows.describe('test receiving birth reports').addBatch(
       ).should.eql(false)
   'onMatch should add acknowlegement for notnormal weight':
     topic: ->
-      getTransition(child_birth_weight: 'Low - Yellow')
-  'onMatch should add normal acknowledgement and reminders':
-    topic: ->
       birth_date = new Date()
       birth_date.setHours(0,0,0,0)
       birth_date.setDate(birth_date.getDate() - 2)
@@ -82,6 +79,25 @@ vows.describe('test receiving birth reports').addBatch(
           days_since_delivery: 2
           reported_date: new Date().getTime()
           birth_weight: 'Low - Yellow'
+      )
+  'onMatch should add normal acknowledgement and reminders':
+    topic: ->
+      birth_date = new Date()
+      birth_date.setHours(0,0,0,0)
+      birth_date.setDate(birth_date.getDate() - 2)
+      getTransition(child_outcome: 'Alive but sick', child_birth_weight: 'Normal', child_birth_date: birth_date.getTime(), 2)
+    'normal weight': (transition) ->
+      transition.complete = (err, doc) ->
+        tasks = doc.tasks
+        tasks.length.should.eql(1)
+        /Thank you, foo/.test(tasks[0].messages[0].message).should.be.ok
+      transition.onMatch(
+        doc:
+          outcome_child: 'Alive but sick'
+          patient_id: 'AA'
+          days_since_delivery: 2
+          reported_date: new Date().getTime()
+          birth_weight: 'Normal'
       )
   'onMatch should add deceased acknowledgement':
     topic: getTransition(child_outcome: 'Deceased')
