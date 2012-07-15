@@ -6,22 +6,35 @@ module.exports =
   required_fields: 'related_entities.clinic'
   onMatch: (change) ->
     { doc } = change
-    doc.patient_identifiers = []
-    doc.patient_identifiers.push(ids.generate(doc.patient_name))
 
-    # set conception/expected date
-    weeks = Number(doc.last_menstrual_period)
-    if _.isNumber(weeks)
-      lmp = @date.getDate()
-      lmp.setHours(0, 0, 0, 0) # "midnight" it
-      lmp.setDate(lmp.getDate() - (7 * weeks))
-      expected_date = new Date(lmp.getTime())
-      expected_date.setDate(expected_date.getDate() + (7 * 40))
-      doc.lmp_date = lmp.getTime()
-      doc.expected_date = expected_date.getTime()
-      @scheduleReminders(doc)
-      @addAcknowledgement(doc)
-      @complete(null, doc)
+    @setId(doc, =>
+      debugger
+      # set conception/expected date
+      weeks = Number(doc.last_menstrual_period)
+      if _.isNumber(weeks)
+        lmp = @date.getDate()
+        lmp.setHours(0, 0, 0, 0) # "midnight" it
+        lmp.setDate(lmp.getDate() - (7 * weeks))
+        expected_date = new Date(lmp.getTime())
+        expected_date.setDate(expected_date.getDate() + (7 * 40))
+        doc.lmp_date = lmp.getTime()
+        doc.expected_date = expected_date.getTime()
+        @scheduleReminders(doc)
+        @addAcknowledgement(doc)
+        @complete(null, doc)
+    )
+  setId: (doc, callback) ->
+    doc.patient_identifiers ?= []
+    id = ids.generate(doc.patient_name)
+    debugger
+    @getOHWRegistration(id, (err, found) =>
+      @complete(err, false) if err
+      if found
+        @setId(doc, callback)
+      else
+        doc.patient_identifiers.push(ids.generate(id))
+        callback()
+    )
   addAcknowledgement: (doc) ->
     { from, patient_identifiers, patient_name, scheduled_tasks, tasks } = doc
     visit = @findScheduledMessage(doc, 'anc_visit')

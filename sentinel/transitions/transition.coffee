@@ -2,15 +2,15 @@ _ = require('underscore')
 
 class Transition
   constructor: (@code, options = {}) ->
-    { @form, @onMatch, @required_fields } = options
+    _.extend(@, options)
+    throw new Error("No onMatch defined") unless @onMatch
 
     @required_fields ?= []
     @required_fields = @required_fields.split(' ') if _.isString(@required_fields)
 
     @db = require('../db')
-    @onMatch ?= (change) ->
-      @complete(null, change.doc)
     _.extend(@, require('../lib/utils'))
+
     @i18n = require('../i18n')
     @date = require('../date')
     @config = require('../config')
