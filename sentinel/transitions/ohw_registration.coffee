@@ -8,7 +8,6 @@ module.exports =
     { doc } = change
 
     @setId(doc, =>
-      debugger
       # set conception/expected date
       weeks = Number(doc.last_menstrual_period)
       if _.isNumber(weeks)
@@ -26,7 +25,6 @@ module.exports =
   setId: (doc, callback) ->
     doc.patient_identifiers ?= []
     id = ids.generate(doc.patient_name)
-    debugger
     @getOHWRegistration(id, (err, found) =>
       @complete(err, false) if err
       if found
