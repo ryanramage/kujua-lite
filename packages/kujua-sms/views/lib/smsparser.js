@@ -12,7 +12,7 @@ var utils = require('kujua-utils'),
  */
 exports.isMuvukuFormat = function(msg) {
     if (typeof msg !== 'string') { return; }
-    return msg.match(new RegExp('^\\s*\\d+![\\w]{4}!.+')) !== null;
+    return msg.match(new RegExp('^\\s*\\d+![\\w]+!.+')) !== null;
 };
 
 /**
@@ -189,13 +189,14 @@ exports.getForm = function(msg) {
 
     // muvuku
     if (msg.split('!').length === 3) {
-        return msg.split('!')[1];
+        return msg.split('!')[1].toUpperCase();
     }
-    // textforms with 4 char form code prefix
-    var match = msg.match(new RegExp('^\\s*([\\w]{4})\\s+.+'));
+    // textforms
+    var match = msg.match(new RegExp('^\\s*([\\w]+)\\s+.+'));
     if (match !== null && match.length === 2) {
-        return match[1];
+        return match[1].toUpperCase();
     }
+
 };
 
 /**

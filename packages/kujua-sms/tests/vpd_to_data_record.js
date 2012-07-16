@@ -11,35 +11,27 @@ var updates = require('kujua-sms/updates'),
 
 var example = {
     sms_message: {
-       from: "+13125551212",
-       message: 'CNPW WKN2# WKS 3# AFP 99# NNT 0# MSL 5# AES01',
+       from: "+17085551212",
+       message: 'VPD WKN2# WKS 3# AFP 99# NNT 0# MSL 5# AES01',
        sent_timestamp: '01-19-12 18:45',
        sent_to: "+15551212",
        type: "sms_message",
        locale: "en",
-       form: "CNPW"
+       form: "VPD"
     },
-    clinic: {
+    health_center: {
         "_id": "4a6399c98ff78ac7da33b639ed60f458",
         "_rev": "1-0b8990a46b81aa4c5d08c4518add3786",
-        "type": "clinic",
-        "name": "Example clinic 1",
+        "type": "health_center",
         "contact": {
-            "name": "Sam Jones",
-            "phone": "+13125551212"
+            "name": "Neal Young",
+            "phone": "+17085551212"
         },
         "parent": {
-            "type": "health_center",
+            "type": "district_hospital",
             "contact": {
-                "name": "Neal Young",
-                "phone": "+17085551212"
-            },
-            "parent": {
-                "type": "district_hospital",
-                "contact": {
-                    "name": "Bernie Mac",
-                    "phone": "+14155551212"
-                }
+                "name": "Bernie Mac",
+                "phone": "+14155551212"
             }
         }
     }
@@ -48,16 +40,15 @@ var example = {
 var expected_callback = {
     data: {
         type: "data_record",
-        form: "CNPW",
+        form: "VPD",
         related_entities: {
             clinic: null
         },
         sms_message: example.sms_message,
-        from: "+13125551212",
+        from: "+17085551212",
         errors: [],
         tasks: [],
-        week_number: 2,
-        weeks_duration: 3,
+        week: 2,
         afp_cases: 99,
         nnt_cases: 0,
         msl_cases: 5,
@@ -69,18 +60,18 @@ var expected_callback = {
 /*
  * STEP 1:
  *
- * Run add_sms and expect a callback to add a clinic to a data record which
+ * Run add_sms and expect a callback to add a health center to a data record which
  * contains all the information from the SMS.
  *
  */
-exports.cnpw_to_record = function (test) {
+exports.vpd_to_record = function (test) {
 
     test.expect(11);
 
     // Data parsed from a gateway POST
     var data = {
-        from: '+13125551212',
-        message: 'CNPW WKN2# WKS 3# AFP 99# NNT 0# MSL 5# AES01',
+        from: '+17085551212',
+        message: 'VPD WKN2# WKS 3# AFP 99# NNT 0# MSL 5# AES01',
         sent_timestamp: '01-19-12 18:45',
         sent_to: '+15551212'
     };
@@ -115,13 +106,13 @@ exports.cnpw_to_record = function (test) {
 
     test.same(
         resp_body.callback.options.path,
-        baseURL + "/CNPW/data_record/add/clinic/%2B13125551212");
+        baseURL + "/VPD/data_record/add/facility/%2B17085551212");
 
     test.same(
         resp_body.callback.data,
         expected_callback.data);
 
-    step2(test, helpers.nextRequest(resp_body, 'CNPW'));
+    step2(test, helpers.nextRequest(resp_body, 'VPD'));
 
 };
 
@@ -129,18 +120,18 @@ exports.cnpw_to_record = function (test) {
 /*
  * STEP 2:
  *
- * Run data_record/add/clinic and expect a callback to
- * check if the same data record already exists.
+ * Run data_record/add/facility and expect a callback to check if the same data
+ * record already exists.
  *
  */
 var step2 = function(test, req) {
 
-    var clinic = example.clinic;
+    var hc = example.health_center;
 
     var viewdata = {rows: [
         {
-            "key": ["+13125551212"],
-            "value": clinic
+            "key": ["+17085551212", "health_center"],
+            "value": hc
         }
     ]};
 
@@ -150,15 +141,15 @@ var step2 = function(test, req) {
 
     test.same(
         resp_body.callback.options.path,
-        baseURL + '/CNPW/data_record/merge/%2B13125551212/2');
+        baseURL + '/VPD/data_record/merge/%2B17085551212/2');
 
     test.same(
         resp_body.callback.data.related_entities,
-        {clinic: clinic});
+        {health_center: hc, clinic: null});
 
     test.same(resp_body.callback.data.errors, []);
 
-    step3(test, helpers.nextRequest(resp_body, 'CNPW'));
+    step3(test, helpers.nextRequest(resp_body, 'VPD'));
 
 };
 
@@ -185,8 +176,8 @@ var step3 = function(test, req) {
     test.same(resp_body.callback.data.errors, []);
     test.same(
         resp_body.callback.data.sms_message,
-        example.sms_message);    
-    
+        example.sms_message);
+
     test.done();
 
 };

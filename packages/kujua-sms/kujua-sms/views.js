@@ -2,16 +2,15 @@ exports.data_records_by_district_and_form = {
     map: function(doc) {
         if(doc.type === 'data_record') {
             var jsonforms = require('views/lib/jsonforms'),
-                def = jsonforms[doc.form],
-                title = def ? def.title : null;
+                def = jsonforms[doc.form];
 
             if (doc.related_entities.clinic
                     && doc.related_entities.clinic.parent
                     && doc.related_entities.clinic.parent.parent) {
                 var dh = doc.related_entities.clinic.parent.parent;
-                emit([dh._id, doc.form, dh.name, title], 1);
+                emit([dh._id, doc.form, dh.name], 1);
             } else {
-                emit([null, doc.form, null, title], 1);
+                emit([null, doc.form, null], 1);
             }
         }
     },
@@ -25,17 +24,16 @@ exports.data_records_valid_by_district_and_form = {
     map: function(doc) {
         if(doc.type === 'data_record') {
             var jsonforms = require('views/lib/jsonforms'),
-                def = jsonforms[doc.form],
-                title = def ? def.title : null;
+                def = jsonforms[doc.form];
 
             if (doc.related_entities.clinic
                     && doc.related_entities.clinic.parent
                     && doc.related_entities.clinic.parent.parent
                     && (!doc.errors || doc.errors.length === 0)) {
                 var dh = doc.related_entities.clinic.parent.parent;
-                emit([dh._id, doc.form, dh.name, title], 1);
+                emit([dh._id, doc.form, dh.name], 1);
             } else if (!doc.errors || doc.errors.length === 0) {
-                emit([null, doc.form, null, title], 1);
+                emit([null, doc.form, null], 1);
             }
         }
     },
@@ -115,10 +113,10 @@ exports.data_records_by_district_form_and_reported_date = {
     }
 };
 
-exports.data_record_by_phone_and_wkn = {
+exports.data_record_by_phone_and_week = {
     map: function(doc) {
         if (doc.type === 'data_record') {
-            emit([doc.from, doc.wkn, doc._id], doc);
+            emit([doc.from, doc.week, doc._id], doc);
         }
     }
 };
@@ -129,12 +127,14 @@ exports.data_record_by_phone_and_wkn = {
 
 exports.facility_by_phone = {
     map: function (doc) {
-        if (doc.type === 'clinic') {
-            emit([doc.contact.phone, 'clinic'], doc);
-        } else if (doc.type === 'health_center') {
-            emit([doc.contact.phone, 'health_center'], doc);
-        } else if (doc.type === 'district_hospital') {
-            emit([doc.contact.phone, 'district_hospital'], doc);
+        if (doc.contact && doc.type) {
+            if (doc.type === 'clinic') {
+                emit([doc.contact.phone, 'clinic'], doc);
+            } else if (doc.type === 'health_center') {
+                emit([doc.contact.phone, 'health_center'], doc);
+            } else if (doc.type === 'district_hospital') {
+                emit([doc.contact.phone, 'district_hospital'], doc);
+            }
         }
     }
 };
