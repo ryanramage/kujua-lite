@@ -5,7 +5,12 @@ exports.facilities_by_type = {
             doc.type === 'health_center' ||
             doc.type === 'district_hospital' ||
             doc.type === 'national_office') {
-                emit([doc.type, doc._id, doc.name], 1);
+                var name = doc.name;
+                if (!name && doc.contact && doc.contact.name) {
+                    name = doc.contact.name;
+                }
+
+                emit([doc.type, doc._id, name], 1);
         }
     },
     reduce: function(keys, values) {
