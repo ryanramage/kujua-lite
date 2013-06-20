@@ -138,7 +138,12 @@
                               "type" : "string"
                            },
                            "reporting_freq": {
-                              "type" : "string"
+                              "title" : "Reporting Frequency",
+                              "type" : "string",
+                              "enum":[
+                                "week",
+                                "month"
+                            ]
                            }
                         }
                       }
