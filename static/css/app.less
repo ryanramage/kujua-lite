@@ -217,7 +217,7 @@ body {
     border: none;
     background: none;
     position: absolute;
-    right: 5px;
+    right: 18px;
     top: 0;
   }
   iframe {
@@ -263,6 +263,9 @@ body {
 }
 .clickable {
     cursor: pointer;
+}
+#content > .wrap {
+    padding: 10px;
 }
 #data-records {
     .wrap-rows {
@@ -369,6 +372,11 @@ body {
                 margin-bottom: 0;
                 white-space: inherit;
                 display: inline-block;
+                width: 100%;
+                -moz-box-sizing: border-box;
+                box-sizing: border-box;
+                overflow: hidden;
+                text-overflow: ellipsis;
             }
         }
         .message > div.msg {
@@ -384,7 +392,7 @@ body {
         }
 
         .outgoing-message .msg {
-            width: 53%;
+            width: 37%;
         }
 
         .add-message {
@@ -728,4 +736,8 @@ h3 .label {
 .label-faded {
     background-color: #bbb;
     box-shadow: 0 0 3px rgba(0, 0, 0, 0.3) inset;
+}
+.districts .name {
+    font-weight: bold;
+    line-height: 30px;
 }
