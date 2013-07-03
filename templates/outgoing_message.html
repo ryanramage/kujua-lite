@@ -3,83 +3,67 @@
     <input type="checkbox" name="select-row-checkbox" />
   </div>
   <div class="direction-icon">
-    <div class="label label-info">
-      <i class="icon-envelope"></i>
-    </div>
+    <i class="icon-envelope icon-muted"></i>
   </div>
   <div class="contact-info">
-    To: {@contact entities="{related_entities}" to="{tasks[0].messages[0].to}"/}
+    <b>To:</b> {@contact entities="{related_entities}" to="{tasks[0].messages[0].to}"/}
   </div>
   <div class="msg">
-    <pre>
-      {tasks[0].messages[0].message}
-    </pre>
+    {tasks[0].messages[0].message}
   </div>
   <div class="icons">
   </div> 
-  <div class="add-message">
+  <div class="timestamp" title="{@formatDate timestamp="{tasks[0].timestamp}"/}">
+  {?tasks[0].timestamp}
+    {@formatDate timestamp="{tasks[0].timestamp}" format="MMM DD HH:mm"/}
+  {/tasks[0].timestamp}
   </div>
-  <div class="reported-date" title="{@formatDate timestamp="{reported_date}"/}">
-    {@formatDate timestamp="{reported_date}" format="MMM DD HH:mm"/}
-  </div>
+  <div class="add-message"></div>
 </div>
 <div class="extended">
   <div class="row-fluid">
     <div class="inset span12 msg-full">
-      <b>Sent by</b> {sent_by}
     {#tasks}
       <p class="pull-right">
         <span class="tasks-state-{state}">{state}</span>
-        {?timestamp}
-        <span class="tasks-timestamp">
-          {@formatDate timestamp="{timestamp}"/}
-        </span>
-        {/timestamp}
       </p>
       {#messages}
+      <div>
+        <b>To:</b>
         {#related_entities}
-          <div>
-            To: 
-          {?clinic.parent.parent.name}
-            {clinic.parent.parent.name}
-            <i class="icon-double-angle-right"></i>
-          {:else}
-            {?health_center.parent.name}
-              {health_center.parent.name}
+          {?clinic}
+            {?clinic.parent.parent.name}
+              {clinic.parent.parent.name}
               <i class="icon-double-angle-right"></i>
-            {/health_center.parent.name}
-          {/clinic.parent.parent.name}
-          {?clinic.parent.name}
-            {clinic.parent.name}
-            <i class="icon-double-angle-right"></i>
-          {:else}
-            {?health_center.name}
-              {health_center.name}
+            {/clinic.parent.parent.name}
+            {?clinic.parent.name}
+              {clinic.parent.name}
               <i class="icon-double-angle-right"></i>
-            {/health_center.name}
-          {/clinic.parent.name}
-          {?clinic.name}
-            {clinic.name}
-          {/clinic.name}
-          {?clinic.contact.rc_code}
-            <span class="label">{clinic.contact.rc_code}</span>
-          {/clinic.contact.rc_code}
-          </div>
-          <div>
-          {?clinic.contact.name}
-            {clinic.contact.name}
-          {/clinic.contact.name}
-          {?clinic.contact.phone}
-            {clinic.contact.phone}
-          {/clinic.contact.phone}
-          </div>
+            {/clinic.parent.name}
+            {?clinic.name}
+              {clinic.name}
+            {/clinic.name}
+            {?clinic.contact.rc_code}
+              <span class="label">{clinic.contact.rc_code}</span>
+            {/clinic.contact.rc_code}
+            {?clinic.contact.name}
+              {clinic.contact.name}
+            {/clinic.contact.name}
+            {?clinic.contact.phone}
+              {clinic.contact.phone}
+            {/clinic.contact.phone}
+          {:else}
+            {to}
+          {/clinic}
         {/related_entities}
         {^related_entities}
-        <p>To: {to}</p>
+          {to}
         {/related_entities}
-        <pre>{message}</pre>
+        </div>
+        <p><b>Sent by:</b> {sent_by}</p>
+        <p><pre>{message}</pre></p>
+      </div>
       {/messages}
     {/tasks}
-    </div>
   </div>
 </div>

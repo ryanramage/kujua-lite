@@ -2,8 +2,10 @@
   <div class="span12">
     <div class="wrap wrap-rows">
       {^data_records}
-        <div class="alert alert-info">
-          No records found.
+        <div class="no-records">
+          <i class="icon-search"></i>
+
+          No records found
         </div>
       {/data_records}
       {?data_records}
@@ -17,8 +19,8 @@
     <div class="ajax-loader">
       <img src="{baseURL}/static/img/ajax-loader-turq.gif" />
     </div>
-    <div class="reached-last-record hide">
-      <i class="icon-stop"></i>
-    </div>
+    <!--div class="reached-last-record hide">
+      <i>No more records.</i>
+    </div-->
   </div>
 </div>

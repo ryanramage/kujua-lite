@@ -3,40 +3,45 @@
     <input type="checkbox" name="select-row-checkbox" />
   </div>
   <div class="direction-icon">
-    <div class="label label-success">
-      <i class="icon-envelope-alt"></i>
-    </div>
+    <i class="icon-envelope icon-muted"></i>
   </div>
   <div class="contact-info">
     {@contact entities="{related_entities}" from="{from}"/}
   </div>
   <div class="msg">
     {#sms_message}
-      <pre>{message}</pre>
+      {message}
     {/sms_message}
   </div>
   <div class="icons">
-    {?tasks}
-      <span class="label label-{@taskClass tasks="{tasks}"/}" title="{@taskMessage tasks="{tasks}"/}">
-        {tasks.length}
-        {@taskIcon tasks="{tasks}"/}
+    {@ifHasState array="{tasks}" state="sent"}
+      <span class="label label-success" title="{@countByState array="{tasks}" state="sent"/} messages sent">
+        {@countByState array="{tasks}" state="sent"/}
+        <i class="icon-envelope"></i>
       </span>
-    {/tasks}
+    {/ifHasState}
+    {@ifHasState array="{tasks}" state="pending"}
+      <span class="label label-info" title="{@countByState array="{tasks}" state="pending"/} messages pending">
+        {@countByState array="{tasks}" state="pending"/}
+        <i class="icon-time"></i>
+      </span>
+    {/ifHasState}
   </div> 
-  <div class="add-message">
-    <button class="btn btn-mini">
-      <i class="icon-comment-alt"></i>
-    </button>
-  </div>
   <div class="reported-date" title="{@formatDate timestamp="{reported_date}"/}">
     {@formatDate timestamp="{reported_date}" format="MMM DD HH:mm"/}
+  </div>
+  <div class="add-message">
+    <button class="btn btn-mini btn-primary">
+      <i class="icon-reply"></i>
+    </button>
   </div>
 </div>
 <div class="extended">
   <div class="row-fluid">
     <div class="inset span12">
+      <div class="row-fluid data-record-details">
       {#related_entities}
-        <div>
+        <p><b>From:</b>
         {?clinic.parent.parent.name}
           {clinic.parent.parent.name}
           <i class="icon-double-angle-right"></i>
@@ -58,42 +63,41 @@
         {?clinic.name}
           {clinic.name}
         {:else}
-          From: {from}
+          {from}
         {/clinic.name}
         {?clinic.contact.rc_code}
           <span class="label">{clinic.contact.rc_code}</span>
         {/clinic.contact.rc_code}
-        </div>
-        <div>
         {?clinic.contact.name}
           {clinic.contact.name}
         {/clinic.contact.name}
         {?clinic.contact.phone}
           {clinic.contact.phone}
         {/clinic.contact.phone}
-        </div>
+        </p>
       {/related_entities}
       {^related_entities}
-        From: {from}
+        <p><b>From:</b> {from}</p>
       {/related_entities}
       {#sms_message}
         <p><pre>{message}</pre></p>
       {/sms_message}
+      </div>
+      {?responses}
+      <div class="row-fluid data-record-responses">
+        {>"data_record_responses.html"/}
+      </div>
+      {/responses}
+      {?errors}
+      <div class="row-fluid data-record-errors">
+        {>"data_record_errors.html"/}
+      </div>
+      {/errors}
+      {?tasks}
+      <div class="row-fluid data-record-tasks">
+        {>"data_record_tasks.html"/}
+      </div>
+      {/tasks}
      </div>
   </div>
-  {?tasks}
-  <div class="row-fluid data-record-tasks">
-    {>"data_record_tasks.html"/}
-  </div>
-  {/tasks}
-  {?responses}
-  <div class="row-fluid data-record-responses">
-    {>"data_record_responses.html"/}
-  </div>
-  {/responses}
-  {?errors}
-  <div class="row-fluid data-record-errors">
-    {>"data_record_errors.html"/}
-  </div>
-  {/errors}
 </div>

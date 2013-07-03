@@ -8,6 +8,8 @@ var db = require('db'),
     users = require('users'),
     charts = require('./ui/charts'),
     templates = require('duality/templates'),
+    muvuku_webapp_url = '/json-forms/_design/json-forms/_rewrite/?_embed_mode=2',
+    url_util = require('url'),
     jsonforms = require('views/lib/jsonforms');
 
 var facility_doc
@@ -308,7 +310,7 @@ function renderReporting(doc, req) {
     events.once('afterResponse', function() {
         if (!isAdmin && !isDistrictAdmin) {
             // not logged in or roles is not setup right
-            return $('#content').html(
+            return $('[data-page=reporting_rates] #content').html(
                 templates.render("403.html", req, {})
             );
         }
@@ -322,7 +324,7 @@ function renderReporting(doc, req) {
             if (isAdmin || (isDistrictAdmin && userDistrict)) {
                 renderPage();
             } else {
-                return $('#content').html(
+                return $('[data-page=reporting_rates] #content').html(
                     templates.render(
                         "500.html", req, {msg: 'District is not defined.'}
                     )
@@ -335,13 +337,15 @@ function renderReporting(doc, req) {
         // TODO fix show when $.kansoconfig is not available
         return {
             title: doc.name,
+            info: getAppInfo.apply(this),
             content: templates.render(template, req, {
                 doc: doc
             })
         };
     } else {
         return {
-            title: "Reporting",
+            title: "Reporting Rates",
+            info: getAppInfo.apply(this),
             content: templates.render("loader.html", req, {})
         }
     }
@@ -369,7 +373,7 @@ function renderPage() {
 
     // Make sure form config is valid.
     if (!form_config || !form_config.code || !form_config.reporting_freq) {
-        return $('#content').html(
+        return $('[data-page=reporting_rates] #content').html(
             templates.render("500.html", req, {
                 doc: doc,
                 msg: 'Please setup config.js with your kujua-reporting '
@@ -387,7 +391,7 @@ function renderPage() {
     }
 
     // render header
-    $('.page-header .container').html(
+    $('[data-page=reporting_rates] .page-header .container').html(
         templates.render('kujua-reporting/page_header_body.html', req, {
             doc: _.extend({}, doc, form_config),
             parentURL: parentURL
@@ -397,7 +401,7 @@ function renderPage() {
     $('body > .container .content').filter(':first').attr('class','content-reporting');
 
     // render date nav
-    $('#date-nav .row').html(
+    $('[data-page=reporting_rates] #date-nav .row').html(
         templates.render('kujua-reporting/date_nav.html', req, {
             date_nav: utils.getDateNav(dates, form_config.reporting_freq),
             _id: doc._id,
@@ -442,7 +446,7 @@ function renderDistrictChoice(appdb, setup) {
             }
         });
 
-        $('#content').html(templates.render("reporting_district_choice.html", {}, {
+        $('[data-page=reporting_rates] #content').html(templates.render("reporting_district_choice.html", {}, {
             forms: forms,
             districts: districts
         }));
@@ -557,6 +561,28 @@ var renderReports = function(err, facilities) {
             });
         }
     });
+}
+
+
+// duplicate code warning!!!!
+var getAppInfo = function() {
+    var info = {
+        muvuku_webapp_url: muvuku_webapp_url
+    };
+    if (this.app_settings && this.app_settings.muvuku_webapp_url) {
+        info.muvuku_webapp_url = this.app_settings.muvuku_webapp_url;
+    }
+    var muvuku = url_util.parse(info.muvuku_webapp_url, true);
+    muvuku.search = null
+    muvuku.query.sync_url = require('duality/core').getBaseURL() + '/add';
+    info.muvuku_webapp_url = url_util.format(muvuku);
+
+    if (this.kanso && this.kanso.git && this.kanso.git.commit) {
+        info.sha = this.kanso.git.commit;
+    }
+
+
+    return info;
 }
 
 /**

@@ -9,26 +9,24 @@
     <link rel="stylesheet" type="text/css" href="{baseURL}/static/css/spreadsheet.css" />
   </head>
   <body>
-    <div id="topnav" class="navbar navbar-inverse navbar-fixed-top">
+    <div id="topnav" class="navbar navbar-fixed-top">
       <div class="navbar-inner">
         <div class="container">
-          <span class="brand"><a href="{baseURL}/"
-              ><span class="kujua">Kujua</span> <span class="lite">Lite</span></a>
-            <span class="version">{settings.version}</span>
-          </span>
+          <a class="brand" href="{baseURL}/">Kujua <span class="lite">Lite</span></a>
+          <span class="version pull-left" title="{info.sha}">{settings.version}</span>
           <ul class="nav pull-right">
-            <li class="records hide">
+            <li class="activity hide">
               <a href="{baseURL}/">
-                <i class="icon-list"></i> Records</a>
+                <i class="icon-list"></i> Activity</a>
             </li>
-            <li class="sms-forms-data hide"><a href="{baseURL}/forms"><i class="icon-file-alt"></i> Forms</a></li>
+            <li class="sms-forms-data hide"><a href="{baseURL}/forms"><i class="icon-download"></i> Export</a></li>
             <li class="facilities hide">
               <a href="{baseURL}/facilities">
                 <i class="icon-home"></i> Facilities</a>
             </li>
             <li class="add-message hide">
               <button class="btn btn-primary">
-                  <i class="icon-comment-alt"></i>
+                  <i class="icon-envelope"></i>
               </button>
             </li>
           </ul>
@@ -49,7 +47,17 @@
         </div>
       </div>
       <div id="footer">
-        <p>&copy; <span id="year"></span> Medic Mobile</p>
+        <!--p class="links">
+          <a title="Email" href="mailto:hello@medicmobile.org?subject=Kujua Lite {settings.version}"
+            ><i class="icon-envelope"></i></a>
+          <a title="Web" href="http://medicmobile.org/"><i class="icon-home"></i></a>
+          <a title="Github" href="http://github.com/medic"><i class="icon-github"></i></a>
+          <a title="Twitter" href="http://twitter.com/medic"><i class="icon-twitter"></i></a>
+        </p-->
+        <div class="wrap">
+          <p class="logo"><img src="{baseURL}/static/img/medic-logo-50h.png"></p>
+          <p class="copy">&copy; <span id="year"></span> Medic Mobile, 501(c)(3)</p>
+        </div>
       </div>
     </div>
     <div id="add-record-panel">
@@ -57,7 +65,11 @@
         <li>
           <button type="button" class="cancel close">×</button>
           <iframe
+<<<<<<< HEAD
             src="/json-forms/_design/json-forms/_rewrite/?_embed_mode=1&_sync_url={baseURL}/add"
+=======
+            src="{info.muvuku_webapp_url}"
+>>>>>>> develop
           ></iframe>
         </li>
       </ul>

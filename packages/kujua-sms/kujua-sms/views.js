@@ -1,56 +1,86 @@
+exports.contacts_by_id = {
+    map: function(doc) {
+        var district,
+            facility;
+
+        if (~['district_hospital', 'health_center', 'clinic'].indexOf(doc.type)) {
+            emit([null, doc._id], null);
+        }
+
+        if (doc.type === 'district_hospital') {
+            emit([doc._id, doc._id], null);
+        } else if (doc.type === 'health_center') {
+            district = doc.parent;
+
+            if (district) {
+                emit([district._id, doc._id], null);
+            }
+        } else if (doc.type === 'clinic') {
+            facility = doc.parent;
+            if (facility) {
+                emit([facility._id, doc._id], null);
+
+                district = facility.parent;
+                if (district) {
+                    emit([district._id, doc._id], null);
+                }
+            }
+        }
+    }
+};
 
 exports.contacts = {
     map: function(doc) {
         var district,
             facility,
-            name,
-            contact,
-            phone,
-            value;
+            contact = doc.contact,
+            name = doc.name,
+            contactName = contact && contact.name,
+            code = contact && contact.rc_code,
+            phone = contact && contact.phone,
+            result;
 
-        function emitKeys(district) {
-            emit([district, name], value);
+        function emitWords(district) {
+            if (name) {
+                name = name.replace(/[^\w\d+\s]/g, '');
+                name.trim().split(/\s+/).forEach(function(token) {
+                    emit([district, token], doc._id);
+                });
+            }
+            if (contactName) {
+                contactName = contactName.replace(/[^\w\d+\s]/g, '');
+                contactName.trim().split(/\s+/).forEach(function(token) {
+                    emit([district, token], doc._id);
+                });
+            }
             if (phone) {
-                emit([district, phone], value);
+                emit([district, phone], doc._id);
+            }
+            if (code) {
+                emit([district, code], doc._id);
             }
         }
 
         if (~['district_hospital', 'health_center', 'clinic'].indexOf(doc.type)) {
-            contact = doc.contact;
-            phone = contact && contact.phone;
-            contactName = contact && contact.name;
-            name = (doc.name + ' ' + (contactName || contact.rc_code || phone)).toLowerCase();
-
-            value = {
-                id: doc._id,
-                phone: phone,
-                code: contact && contact.rc_code,
-                name: doc.name,
-                contactName: contactName,
-                type: doc.type
-            };
-
-            emitKeys(null);
-            emit(['__by_id', doc._id], value);
+            emitWords(null);
         }
 
         if (doc.type === 'district_hospital') {
-            emit([doc._id, name], value);
+            emitWords(doc._id);
         } else if (doc.type === 'health_center') {
             district = doc.parent;
 
             if (district) {
-                emitKeys(district._id);
+                emitWords(district._id);
             }
-            emitKeys(doc._id);
         } else if (doc.type === 'clinic') {
             facility = doc.parent;
             if (facility) {
-                emitKeys(facility._id);
+                emitWords(facility._id);
 
                 district = facility.parent;
                 if (district) {
-                    emitKeys(district._id);
+                    emitWords(district._id);
                 }
             }
         }
